@@ -8,18 +8,21 @@ public class NetworkManagerBehaviour : NetworkManager {
 	private const int NETWORK_PORT = 7777;
 
 	[SerializeField]
-	private NetworkDiscoveryBehaviour discovery;
+	private NetworkDiscoveryBehaviour _discovery;
+	public NetworkDiscoveryBehaviour Discovery {
+		get {
+			return _discovery;
+		}
+
+	}
 
 
-	/// <summary>
-	/// Taps to play.
-	/// </summary>
-	public void TapToPlay () {
-
+	void Start () {
 		networkAddress = Network.player.ipAddress;
 		networkPort = NETWORK_PORT;
 
-		StartHost ();
+		Debug.Log (networkPort);
+		Debug.Log (networkAddress);
 	}
 
 	/// <summary>
@@ -27,17 +30,17 @@ public class NetworkManagerBehaviour : NetworkManager {
 	/// </summary>
 	public override void OnStartHost () {
 		//To stop current search for a server
-		discovery.StopBroadcast ();
+		_discovery.StopBroadcast ();
 
 		//To start game being server
-		discovery.broadcastData = networkPort.ToString ();
-		discovery.StartAsServer ();
+		_discovery.broadcastData = networkPort.ToString ();
+		_discovery.StartAsServer ();
 
 	}
 
 	public void TapToJoin() {
 
-		networkAddress = discovery.Server.ServerIp;
+		networkAddress = _discovery.Server.ServerIp;
 		StartClient();
 	}
 		

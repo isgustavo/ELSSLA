@@ -28,15 +28,21 @@ public class NetworkDiscoveryBehaviour : NetworkDiscovery {
 		get { return _server; }
 	}
 
+	public ObserverBehaviour observer;
+
 	void Start () {
+
 		Initialize();
 		StartAsClient();
+
+		//observer = GameObject.FindGameObjectWithTag("GameController");
 	}
 
 	public override void OnReceivedBroadcast (string fromAddress, string data) {
 
 		//Network discovery component has found a server being broadcasted
 		ServerFound (fromAddress, data);
+		observer.OnNotify ();
 	}
 
 	private void ServerFound (string ip, string data) {
