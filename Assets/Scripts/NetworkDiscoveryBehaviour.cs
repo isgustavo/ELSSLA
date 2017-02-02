@@ -34,8 +34,6 @@ public class NetworkDiscoveryBehaviour : NetworkDiscovery {
 
 		Initialize();
 		StartAsClient();
-
-		//observer = GameObject.FindGameObjectWithTag("GameController");
 	}
 
 	public override void OnReceivedBroadcast (string fromAddress, string data) {

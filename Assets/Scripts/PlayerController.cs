@@ -6,6 +6,10 @@ using UnityEngine.Networking;
 public class PlayerController : NetworkBehaviour {
 
 	private const float ROTATE_AMOUNT = 2;
+	public GameObject bulletPrefab;
+	public Transform bulletSpawn;
+
+	private SpriteRenderer _renderer;
 
 	void Update () {
 
@@ -15,6 +19,9 @@ public class PlayerController : NetworkBehaviour {
 		float tiltValue = GetTiltValue();
 		Vector3 oldAngles = this.transform.eulerAngles;
 		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
+		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (1 * ROTATE_AMOUNT));
+
+
 	}
 
 	float GetTiltValue() {
@@ -36,5 +43,11 @@ public class PlayerController : NetworkBehaviour {
 		} else {
 			return tiltScale;
 		}
+	}
+
+	public override void OnStartLocalPlayer ()
+	{
+		base.OnStartLocalPlayer ();
+		Debug.Log ("OnStartLocalPlayer");
 	}
 }

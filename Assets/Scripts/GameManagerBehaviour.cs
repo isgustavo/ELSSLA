@@ -14,6 +14,11 @@ public abstract class ObserverBehaviour : MonoBehaviour {
 
 public class GameManagerBehaviour : ObserverBehaviour {
 
+	private static GameManagerBehaviour _instance = null; 
+	public static GameManagerBehaviour Instance {
+		get { return _instance; }
+	}
+
 	public enum EGameState {
 		MainMenu,
 		Game,
@@ -54,28 +59,41 @@ public class GameManagerBehaviour : ObserverBehaviour {
 	public Button tapToPlay;
 	public Button tapToJoin;
 
-	void Start () {
-		
+
+	void Awake() {
+		if (_instance == null) {
+			_instance = this;
+		} else if (_instance != this) {
+			Destroy (gameObject);    
+		}
+		DontDestroyOnLoad(gameObject);
 	}
+
 
 	public override void OnNotify () {
 
 		//TODO
 		tapToPlay.gameObject.SetActive(false);
 		tapToJoin.gameObject.SetActive(true);
-		Debug.Log (networkManager.Discovery.Server.ServerIp);
+
+		Debug.Log (networkManager.discovery.Server.ServerIp);
 
 	}
+
+	//TODO remove 
+	public static int TEST_SHIP = 0;
 
 	public void TapToPlayOnClick () {
 		GameState = EGameState.Game;
 		networkManager.StartHost ();
+		Debug.Log (" return start server = ");
 
 	}
 
 	public void TapToJoinOnClick () {
+		TEST_SHIP = 1;
 		GameState = EGameState.Game;
-		networkManager.networkAddress = networkManager.Discovery.Server.ServerIp;
 		networkManager.StartClient ();
 	}
+		
 }
