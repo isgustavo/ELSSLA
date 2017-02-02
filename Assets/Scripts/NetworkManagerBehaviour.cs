@@ -11,8 +11,8 @@ public class NetworkManagerBehaviour : NetworkManager {
 	public NetworkDiscoveryBehaviour discovery;
 
 	// TODO variables test for registerPrefab to spawn player - remove
-	public GameObject space;
-	public GameObject space2;
+	//public GameObject space;
+	//public GameObject space2;
 
 
 	/// <summary>
@@ -44,8 +44,8 @@ public class NetworkManagerBehaviour : NetworkManager {
 
 
 
-		ClientScene.RegisterPrefab(space);
-		ClientScene.RegisterPrefab(space2);
+		//ClientScene.RegisterPrefab(space);
+		//ClientScene.RegisterPrefab(space2);
 
 
 		client.RegisterHandler(MsgType.Connect, OnConnected);
@@ -72,11 +72,11 @@ public class NetworkManagerBehaviour : NetworkManager {
 		Debug.Log(selectedClass);
 		if (selectedClass == 1) {
 			Debug.Log ("number == 1");
-			var player = (GameObject)GameObject.Instantiate (space, transform.position, Quaternion.identity);
+			var player = (GameObject)GameObject.Instantiate (Resources.Load("Spaceship"), transform.position, Quaternion.identity);
 			NetworkServer.AddPlayerForConnection (conn, player, playerControllerId);
 		} else {
 			Debug.Log ("number == 0");
-			var player = (GameObject)GameObject.Instantiate (space2, transform.position, Quaternion.identity);
+			var player = (GameObject)GameObject.Instantiate (Resources.Load("spaceship_1"), transform.position, Quaternion.identity);
 			NetworkServer.AddPlayerForConnection (conn, player, playerControllerId);
 		}
 

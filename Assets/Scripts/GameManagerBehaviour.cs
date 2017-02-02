@@ -59,6 +59,8 @@ public class GameManagerBehaviour : ObserverBehaviour {
 	public Button tapToPlay;
 	public Button tapToJoin;
 
+	public bool isMovementButtonPointDown = false;
+
 
 	void Awake() {
 		if (_instance == null) {
@@ -94,6 +96,12 @@ public class GameManagerBehaviour : ObserverBehaviour {
 		TEST_SHIP = 1;
 		GameState = EGameState.Game;
 		networkManager.StartClient ();
+	}
+
+
+	public void TapToMovementEventTrigger (bool state) {
+
+		isMovementButtonPointDown = state;
 	}
 		
 }
