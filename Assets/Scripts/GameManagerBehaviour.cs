@@ -61,6 +61,8 @@ public class GameManagerBehaviour : ObserverBehaviour {
 
 	public bool isMovementButtonPointDown = false;
 
+	public bool isShooting = false;
+
 
 	void Awake() {
 		if (_instance == null) {
@@ -102,6 +104,11 @@ public class GameManagerBehaviour : ObserverBehaviour {
 	public void TapToMovementEventTrigger (bool state) {
 
 		isMovementButtonPointDown = state;
+	}
+
+	public void TapToShootingEventTrigger (bool state) {
+
+		isShooting = state;
 	}
 		
 }

@@ -9,6 +9,8 @@ public class PlayerController : NetworkBehaviour {
 	private const float ROTATE_AMOUNT = 2;
 	public GameObject bulletPrefab;
 	public Transform bulletSpawn;
+	public float timeBetweenFires = .3f;
+	private float timeTilNextFire = 0.0f;
 
 	private SpriteRenderer _renderer;
 
@@ -26,6 +28,8 @@ public class PlayerController : NetworkBehaviour {
 
 		Movement ();
 
+		Shooting ();
+		timeTilNextFire -= Time.deltaTime;
 
 		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (1 * ROTATE_AMOUNT));
 
@@ -58,6 +62,19 @@ public class PlayerController : NetworkBehaviour {
 
 	}
 
+	private void Shooting() {
+
+		if (GameManagerBehaviour.Instance.isShooting) {
+
+			if (timeTilNextFire < 0) {
+				this.timeTilNextFire = timeBetweenFires;
+				CmdFire ();
+			}
+
+		}
+			
+	}
+
 	float GetTiltValue() {
 		float TILT_MIN = 0.05f;
 		float TILT_MAX = 0.2f;
@@ -87,5 +104,21 @@ public class PlayerController : NetworkBehaviour {
 		Camera2DFollow camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<Camera2DFollow>();
 
 		camera.setTarget (transform);
+	}
+
+
+	[Command]
+	void CmdFire() {
+
+		var bullet = (GameObject)Instantiate(
+			bulletPrefab,
+			bulletSpawn.position,
+			bulletSpawn.rotation);
+
+
+
+		NetworkServer.Spawn(bullet);
+
+		//Destroy (bullet, 9f);
 	}
 }
