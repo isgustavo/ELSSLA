@@ -1,4 +1,18 @@
-﻿using System.Collections;
+﻿// Copyright 2017 ISGUSTAVO
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//          http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -9,10 +23,6 @@ public class NetworkManagerBehaviour : NetworkManager {
 
 	[SerializeField]
 	public NetworkDiscoveryBehaviour discovery;
-
-	// TODO variables test for registerPrefab to spawn player - remove
-	//public GameObject space;
-	//public GameObject space2;
 
 
 	/// <summary>
@@ -30,6 +40,8 @@ public class NetworkManagerBehaviour : NetworkManager {
 		
 		base.networkAddress = discovery.Server.ServerIp;
 		base.StartClient ();
+
+		Debug.Log ("Client joined");
 	}
 
 	public override void OnStartHost () {
@@ -38,24 +50,18 @@ public class NetworkManagerBehaviour : NetworkManager {
 
 		discovery.broadcastData = networkPort.ToString ();
 		discovery.StartAsServer ();
+		Debug.Log ("Host on");
 	}
 
 	public override void OnStartClient (NetworkClient client) {
-
-
-
-		//ClientScene.RegisterPrefab(space);
-		//ClientScene.RegisterPrefab(space2);
-
-
-		client.RegisterHandler(MsgType.Connect, OnConnected);
+		
+		//client.RegisterHandler(MsgType.Connect, OnConnected);
 
 		base.OnStartClient (client);
-		Debug.Log ("onStartClient");
 
 	}
 
-
+	/*DONT REMOVE
 	public void OnConnected(UnityEngine.Networking.NetworkMessage netMsg) {
 		NetworkMessage message = new NetworkMessage();
 		message.chosenClass = GameManagerBehaviour.TEST_SHIP; // mock choose
@@ -86,6 +92,6 @@ public class NetworkManagerBehaviour : NetworkManager {
 	//TODO Message class - Implementation incomplete
 	public class NetworkMessage : MessageBase {
 		public int chosenClass;
-	}
+	}*/
 
 }

@@ -1,17 +1,27 @@
-﻿using System.Collections;
+﻿// Copyright 2017 ISGUSTAVO
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//          http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
-public interface IObserver {
-
-	void OnNotify ();
-}
 
 public abstract class ObserverBehaviour : MonoBehaviour {
 	public abstract void OnNotify ();
 }
 
+[RequireComponent (typeof (NetworkDiscoveryBehaviour))]
 public class GameManagerBehaviour : ObserverBehaviour {
 
 	private static GameManagerBehaviour _instance = null; 
@@ -19,50 +29,11 @@ public class GameManagerBehaviour : ObserverBehaviour {
 		get { return _instance; }
 	}
 
-	public enum EGameState {
-		MainMenu,
-		Game,
-		Pause
-	}
-
-	[SerializeField]
-	private Canvas mainMenuCanvas;
-	[SerializeField]
-	private Canvas gameMenuCanvas;
-	[SerializeField]
-	private Canvas pauseMenuCanvas;
-
 	[SerializeField]
 	private NetworkManagerBehaviour networkManager;
 
-	private EGameState _gameState;
-	public EGameState GameState {
-		get {
-			return _gameState;
-		}
-
-		set {
-			_gameState = value;
-			switch (_gameState) {
-			case EGameState.MainMenu: 
-				mainMenuCanvas.enabled = true;
-				gameMenuCanvas.enabled = false;
-				break;
-			case EGameState.Game:
-				mainMenuCanvas.enabled = false;
-				gameMenuCanvas.enabled = true;
-				break;
-			}
-		}
-	}
-
-	public Button tapToPlay;
-	public Button tapToJoin;
-
-	public bool isMovementButtonPointDown = false;
-
-	public bool isShooting = false;
-
+	public GameObject tapToPlay;
+	public GameObject tapToJoin;
 
 	void Awake() {
 		if (_instance == null) {
@@ -76,7 +47,6 @@ public class GameManagerBehaviour : ObserverBehaviour {
 
 	public override void OnNotify () {
 
-		//TODO
 		tapToPlay.gameObject.SetActive(false);
 		tapToJoin.gameObject.SetActive(true);
 
@@ -84,31 +54,14 @@ public class GameManagerBehaviour : ObserverBehaviour {
 
 	}
 
-	//TODO remove 
-	public static int TEST_SHIP = 0;
+	public void StartAsAHost () {
 
-	public void TapToPlayOnClick () {
-		GameState = EGameState.Game;
 		networkManager.StartHost ();
-		Debug.Log (" return start server = ");
-
 	}
 
-	public void TapToJoinOnClick () {
-		TEST_SHIP = 1;
-		GameState = EGameState.Game;
+	public void StartAsAClient () {
+		
 		networkManager.StartClient ();
-	}
-
-
-	public void TapToMovementEventTrigger (bool state) {
-
-		isMovementButtonPointDown = state;
-	}
-
-	public void TapToShootingEventTrigger (bool state) {
-
-		isShooting = state;
 	}
 		
 }

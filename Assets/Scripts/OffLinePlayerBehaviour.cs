@@ -1,41 +1,31 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 using UnityStandardAssets._2D;
 
-public class PlayerController : NetworkBehaviour {
+public class OffLinePlayerBehaviour : MonoBehaviour {
 
 	private const float ROTATE_AMOUNT = 2;
-	public GameObject bulletPrefab;
-	public Transform bulletSpawn;
-	public float timeBetweenFires = .3f;
-	private float timeTilNextFire = 0.0f;
 
-	private SpriteRenderer _renderer;
-
-	//public bool isMovement = false;
 	private float movementSpeed = 0f;
 	private float speed = 5f;
 
-
 	void Update () {
-
-		if (!isLocalPlayer)
-			return;
 
 		Rotation ();
 
-		//Movement ();
-
-		//Shooting ();
-		timeTilNextFire -= Time.deltaTime;
-
-		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (1 * ROTATE_AMOUNT));
+		Movement ();
 
 
 	}
 
+	void Start () {
+
+		Camera2DFollow camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<Camera2DFollow>();
+
+		camera.setTarget (transform);
+
+	}
 
 	private void Rotation () {
 
@@ -45,10 +35,10 @@ public class PlayerController : NetworkBehaviour {
 		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
 	}
 
-	/*private void Movement () {
+	private void Movement () {
 		//Debug.Log (isMovement);
-		if (GameManagerBehaviour.Instance.isMovementButtonPointDown) {
-			
+		if (isMovementButtonPointDown) {
+
 			transform.position += transform.up * Time.deltaTime * speed;
 			movementSpeed = speed;
 		} else {
@@ -61,19 +51,6 @@ public class PlayerController : NetworkBehaviour {
 		}
 
 	}
-
-	private void Shooting() {
-
-		if (GameManagerBehaviour.Instance.isShooting) {
-
-			if (timeTilNextFire < 0) {
-				this.timeTilNextFire = timeBetweenFires;
-				CmdFire ();
-			}
-
-		}
-			
-	}*/
 
 	float GetTiltValue() {
 		float TILT_MIN = 0.05f;
@@ -96,29 +73,11 @@ public class PlayerController : NetworkBehaviour {
 		}
 	}
 
-	public override void OnStartLocalPlayer ()
-	{
-		base.OnStartLocalPlayer ();
-		Debug.Log ("OnStartLocalPlayer");
+	bool isMovementButtonPointDown = false;
 
-		Camera2DFollow camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<Camera2DFollow>();
+	public void TapToMovementEventTrigger (bool state) {
 
-		camera.setTarget (transform);
+		isMovementButtonPointDown = state;
 	}
 
-
-	[Command]
-	void CmdFire() {
-
-		var bullet = (GameObject)Instantiate(
-			bulletPrefab,
-			bulletSpawn.position,
-			bulletSpawn.rotation);
-
-
-
-		NetworkServer.Spawn(bullet);
-
-		//Destroy (bullet, 9f);
-	}
 }
