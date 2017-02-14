@@ -20,9 +20,15 @@ using UnityEngine.UI;
 public abstract class ObserverBehaviour : MonoBehaviour {
 	public abstract void OnNotify ();
 }
-
-[RequireComponent (typeof (NetworkDiscoveryBehaviour))]
+	
 public class GameManagerBehaviour : ObserverBehaviour {
+
+	public enum EGameState {
+			MainMenu,
+			Game,
+			Pause
+		}
+	
 
 	private static GameManagerBehaviour _instance = null; 
 	public static GameManagerBehaviour Instance {
@@ -32,8 +38,32 @@ public class GameManagerBehaviour : ObserverBehaviour {
 	[SerializeField]
 	private NetworkManagerBehaviour networkManager;
 
+	private EGameState _gameState;
+	public EGameState GameState {
+		get {
+				return _gameState;
+			}
+
+		set {
+			_gameState = value;
+
+			switch (_gameState) {
+			case EGameState.MainMenu: 
+				mainMenu.SetActive (true);
+			break;
+			case EGameState.Game:
+				mainMenu.SetActive (false);
+			break;
+			}
+		}
+	}
+
+	public GameObject mainMenu;
 	public GameObject tapToPlay;
 	public GameObject tapToJoin;
+
+	public bool isMovement;
+	public bool isShooting;
 
 	void Awake() {
 		if (_instance == null) {
@@ -55,13 +85,23 @@ public class GameManagerBehaviour : ObserverBehaviour {
 	}
 
 	public void StartAsAHost () {
-
+		GameState = EGameState.Game;
 		networkManager.StartHost ();
 	}
 
 	public void StartAsAClient () {
 		
 		networkManager.StartClient ();
+	}
+		
+	public void MovementTrigger (bool value) {
+
+		isMovement = value;
+	}
+
+	public void ShootingTrigger (bool value) {
+
+		isShooting = value;
 	}
 		
 }

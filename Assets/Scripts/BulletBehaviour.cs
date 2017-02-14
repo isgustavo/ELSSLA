@@ -5,16 +5,34 @@ using UnityEngine.Networking;
 
 public class BulletBehaviour : NetworkBehaviour {
 
-	public float lifetime = 2.0f;
+	private Rigidbody _rigidbody;
+	//private ParticleSystem _rocket;
+
+	public float spreadDelay = 2f;
+	public float _spreadAmount = .5f;
+	public bool spread = false;
+	private Quaternion rotTarget;
+
+	public float bulletSpeed = 5f;
+
+	public float lifetime = 3.0f;
 	public float speed = 5.0f;
 
 	void Start () {
-		Destroy (gameObject, lifetime);
-		
+		Debug.Log ("bullet Start");
+		_rigidbody = GetComponent<Rigidbody> ();
+		rotTarget = _rigidbody.rotation;
+
+		StartCoroutine("Spread");
+		StartCoroutine("DestroyRocket");
+
+		Destroy(this.gameObject, lifetime + .75f);
+				
+	
 	}
 
 
-	void Update () {
+	/*void Update () {
 
 
 		if (isServer) {
@@ -24,5 +42,28 @@ public class BulletBehaviour : NetworkBehaviour {
 		}
 		transform.Translate (Vector3.up * Time.deltaTime * speed);
 		//transform.position += transform.forward * Time.deltaTime * speed;
+	}*/
+
+	void FixedUpdate () {
+		_rigidbody.velocity = transform.up * bulletSpeed;
+
+		if (spread) {
+			_rigidbody.rotation = Quaternion.Lerp (_rigidbody.rotation, rotTarget, Time.deltaTime * _spreadAmount);	
+		}							
 	}
+
+
+	public IEnumerator Spread () {
+		yield return new WaitForSeconds(spreadDelay);
+
+		rotTarget = Random.rotation;					
+		spread = true;							
+	}
+
+	public IEnumerator DestroyRocket () {
+		yield return new WaitForSeconds(lifetime);
+		//_rocket.enableEmission = false;
+		GetComponent<Collider> ().enabled = false;
+	}
+		
 }

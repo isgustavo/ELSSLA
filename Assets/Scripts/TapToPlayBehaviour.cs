@@ -6,7 +6,6 @@ public class TapToPlayBehaviour : MonoBehaviour {
 
 
 	void OnMouseUp() {
-		gameObject.SetActive (false);
 		GameManagerBehaviour.Instance.StartAsAHost ();
 	}
 }

@@ -1,54 +1,68 @@
-﻿using System.Collections;
+﻿// Copyright 2017 ISGUSTAVO
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//          http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityStandardAssets._2D;
 
-public class PlayerController : NetworkBehaviour {
+public class PlayerBehaviour : NetworkBehaviour {
 
 	private const float ROTATE_AMOUNT = 2;
+
 	public GameObject bulletPrefab;
 	public Transform bulletSpawn;
 	public float timeBetweenFires = .3f;
 	private float timeTilNextFire = 0.0f;
 
-	private SpriteRenderer _renderer;
-
-	//public bool isMovement = false;
 	private float movementSpeed = 0f;
 	private float speed = 5f;
-
 
 	void Update () {
 
 		if (!isLocalPlayer)
 			return;
 
-		//Rotation ();
+		Vector3 newPos = transform.position;
+		if (transform.position.z > -5.9f) {
+			newPos.z = Mathf.Lerp (transform.position.z, -6, Time.deltaTime * 5f);
+		} else {
+			newPos.z = -6f;	
+		}
+		transform.position = newPos;
 
-		//Movement ();
+		Rotation ();
 
-		//Shooting ();
+		Movement ();
+
+		Shooting ();
 		timeTilNextFire -= Time.deltaTime;
-
-		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (1 * ROTATE_AMOUNT));
-
-
 	}
 
-
-	/*private void Rotation () {
+	private void Rotation () {
 
 		float tiltValue = GetTiltValue();
 		Vector3 oldAngles = this.transform.eulerAngles;
-		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (1 * ROTATE_AMOUNT));
-		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
+		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (1 * ROTATE_AMOUNT));
+		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
 	}
 
 	private void Movement () {
 		//Debug.Log (isMovement);
-		if (GameManagerBehaviour.Instance.isMovementButtonPointDown) {
-			
+		if (GameManagerBehaviour.Instance.isMovement) {
+
 			transform.position += transform.up * Time.deltaTime * speed;
 			movementSpeed = speed;
 		} else {
@@ -72,8 +86,8 @@ public class PlayerController : NetworkBehaviour {
 			}
 
 		}
-			
-	}*/
+
+	}
 
 	float GetTiltValue() {
 		float TILT_MIN = 0.05f;
@@ -106,7 +120,6 @@ public class PlayerController : NetworkBehaviour {
 		camera.setTarget (transform);
 	}
 
-
 	[Command]
 	void CmdFire() {
 
@@ -119,6 +132,5 @@ public class PlayerController : NetworkBehaviour {
 
 		NetworkServer.Spawn(bullet);
 
-		//Destroy (bullet, 9f);
 	}
 }
