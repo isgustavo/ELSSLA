@@ -21,6 +21,7 @@ using UnityStandardAssets._2D;
 public class PlayerBehaviour : NetworkBehaviour {
 
 	private const float ROTATE_AMOUNT = 2;
+	private Rigidbody _rigidbody;
 
 	public GameObject bulletPrefab;
 	public Transform bulletSpawn;
@@ -30,25 +31,38 @@ public class PlayerBehaviour : NetworkBehaviour {
 	private float movementSpeed = 0f;
 	private float speed = 5f;
 
+	void Start () {
+		_rigidbody = GetComponent<Rigidbody> ();
+
+	}
 	void Update () {
 
 		if (!isLocalPlayer)
 			return;
 
-		Vector3 newPos = transform.position;
-		if (transform.position.z > -5.9f) {
-			newPos.z = Mathf.Lerp (transform.position.z, -6, Time.deltaTime * 5f);
-		} else {
-			newPos.z = -6f;	
-		}
-		transform.position = newPos;
+		//Vector3 newPos = transform.position;
+		//if (transform.position.z > -5.9f) {
+		//	newPos.z = Mathf.Lerp (transform.position.z, -6, Time.deltaTime * 5f);
+		//} else {
+		//	newPos.z = -6f;	
+		//}
+		//transform.position = newPos;
 
 		Rotation ();
 
-		Movement ();
+
 
 		Shooting ();
 		timeTilNextFire -= Time.deltaTime;
+	}
+
+
+	void FixedUpdate () {
+
+		if (!isLocalPlayer)
+			return;
+
+		Movement ();
 	}
 
 	private void Rotation () {
@@ -63,13 +77,16 @@ public class PlayerBehaviour : NetworkBehaviour {
 		//Debug.Log (isMovement);
 		if (GameManagerBehaviour.Instance.isMovement) {
 
-			transform.position += transform.up * Time.deltaTime * speed;
+			_rigidbody.velocity = transform.up * speed;
+
+			//transform.position += transform.up * Time.deltaTime * speed;
 			movementSpeed = speed;
 		} else {
 
 			if (movementSpeed > 0) {
 				movementSpeed -= 0.05f;
-				transform.position += transform.up * Time.deltaTime * movementSpeed;
+				_rigidbody.velocity = transform.up * movementSpeed;
+				//transform.position += transform.up * movementSpeed;
 			}
 
 		}

@@ -50,15 +50,18 @@ public class GameManagerBehaviour : ObserverBehaviour {
 			switch (_gameState) {
 			case EGameState.MainMenu: 
 				mainMenu.SetActive (true);
+				gameMenu.SetActive (false);
 			break;
 			case EGameState.Game:
 				mainMenu.SetActive (false);
+				gameMenu.SetActive (true);
 			break;
 			}
 		}
 	}
 
 	public GameObject mainMenu;
+	public GameObject gameMenu;
 	public GameObject tapToPlay;
 	public GameObject tapToJoin;
 
@@ -90,7 +93,7 @@ public class GameManagerBehaviour : ObserverBehaviour {
 	}
 
 	public void StartAsAClient () {
-		
+		GameState = EGameState.Game;
 		networkManager.StartClient ();
 	}
 		

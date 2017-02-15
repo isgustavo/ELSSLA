@@ -55,16 +55,16 @@ public class NetworkManagerBehaviour : NetworkManager {
 
 	public override void OnStartClient (NetworkClient client) {
 		
-		//client.RegisterHandler(MsgType.Connect, OnConnected);
+		client.RegisterHandler(MsgType.Connect, OnConnected);
 
 		base.OnStartClient (client);
 
 	}
 
-	/*DONT REMOVE
+
 	public void OnConnected(UnityEngine.Networking.NetworkMessage netMsg) {
 		NetworkMessage message = new NetworkMessage();
-		message.chosenClass = GameManagerBehaviour.TEST_SHIP; // mock choose
+		//message.chosenClass = GameManagerBehaviour.TEST_SHIP; // mock choose
 
 		ClientScene.AddPlayer (client.connection, 0, message);
 		Debug.Log ("OnConnected");
@@ -73,18 +73,22 @@ public class NetworkManagerBehaviour : NetworkManager {
 	public override void OnServerAddPlayer (NetworkConnection conn, short playerControllerId, NetworkReader extraMessageReader)
 	{
 
-		NetworkMessage message = extraMessageReader.ReadMessage< NetworkMessage>();
-		int selectedClass = message.chosenClass;
-		Debug.Log(selectedClass);
-		if (selectedClass == 1) {
-			Debug.Log ("number == 1");
-			var player = (GameObject)GameObject.Instantiate (Resources.Load("Spaceship"), transform.position, Quaternion.identity);
+		//NetworkMessage message = extraMessageReader.ReadMessage< NetworkMessage>();
+		//int selectedClass = message.chosenClass;
+		//Debug.Log(selectedClass);
+		//if (selectedClass == 1) {
+			//Debug.Log ("number == 1");
+
+		GameObject[] li = spawnPrefabs.ToArray();
+		GameObject o = li [1];
+
+		var player = (GameObject)GameObject.Instantiate (o, transform.position, Quaternion.identity);
 			NetworkServer.AddPlayerForConnection (conn, player, playerControllerId);
-		} else {
-			Debug.Log ("number == 0");
-			var player = (GameObject)GameObject.Instantiate (Resources.Load("spaceship_1"), transform.position, Quaternion.identity);
-			NetworkServer.AddPlayerForConnection (conn, player, playerControllerId);
-		}
+		//} else {
+		//	Debug.Log ("number == 0");
+		//	var player = (GameObject)GameObject.Instantiate (Resources.Load("spaceship_1"), transform.position, Quaternion.identity);
+		//	NetworkServer.AddPlayerForConnection (conn, player, playerControllerId);
+		//}
 
 		Debug.Log ("OnServerAddPlayer 3");
 	}
@@ -92,6 +96,6 @@ public class NetworkManagerBehaviour : NetworkManager {
 	//TODO Message class - Implementation incomplete
 	public class NetworkMessage : MessageBase {
 		public int chosenClass;
-	}*/
+	}
 
 }
