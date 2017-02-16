@@ -22,17 +22,21 @@ public class AsteroidBehaviour : NetworkBehaviour {
 	}
 
 	void Update () {
-		
+
+
 		if (_hitPoints <= 0) {
-			int asteroidFragmentsCount = Random.Range (20, 25);
+			//int asteroidFragmentsCount = Random.Range (20, 25);
 
 			//_asteroidFragment.transform.position = transform.position;
 			//ParticleSystem.MainModule  mm = _asteroidFragment.main;
 			//mm.startColor = _renderer.sharedMaterial.color;
-			Instantiate (_asteroidFragment, transform.position, transform.rotation).Play ();
+
+
+			//CmdExplosion();
 			//_asteroidFragment.Play();
 
 			//set point
+			CmdStartExplosion();
 
 			gameObject.SetActive (false);
 
@@ -52,5 +56,27 @@ public class AsteroidBehaviour : NetworkBehaviour {
 	public void SetDamage(int damage) {
 		Debug.Log ("set damage");
 		_hitPoints -= damage;
+	}
+
+	[Command]
+	void CmdStartExplosion() {
+
+		//ParticleSystem obj = Instantiate (_asteroidFragment, transform.position, transform.rotation);
+
+		//NetworkServer.Spawn (_asteroidFragment);
+
+		//_asteroidFragment.Play ();
+		RpcStartExplosion ();
+
+	}
+
+	[ClientRpc]
+	void RpcStartExplosion() { 
+
+		if(isLocalPlayer)
+			return;
+
+		((ParticleSystem) Instantiate (_asteroidFragment, transform.position, transform.rotation)).Play();
+
 	}
 }
