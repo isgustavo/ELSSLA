@@ -16,6 +16,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Networking;
 
 public abstract class ObserverBehaviour : MonoBehaviour {
 	public abstract void OnNotify ();
@@ -64,6 +65,7 @@ public class GameManagerBehaviour : ObserverBehaviour {
 	public GameObject gameMenu;
 	public GameObject tapToPlay;
 	public GameObject tapToJoin;
+	public Transform testPrefab;
 
 	public bool isMovement;
 	public bool isShooting;
@@ -106,5 +108,7 @@ public class GameManagerBehaviour : ObserverBehaviour {
 
 		isShooting = value;
 	}
+
+
 		
 }

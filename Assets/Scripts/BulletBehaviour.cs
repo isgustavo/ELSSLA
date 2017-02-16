@@ -7,6 +7,7 @@ public class BulletBehaviour : NetworkBehaviour {
 
 	private Rigidbody _rigidbody;
 	//private ParticleSystem _rocket;
+	public int damage = 3;
 
 	public float spreadDelay = 2f;
 	public float _spreadAmount = .5f;
@@ -66,4 +67,14 @@ public class BulletBehaviour : NetworkBehaviour {
 		GetComponent<Collider> ().enabled = false;
 	}
 		
+
+	void OnCollisionEnter(Collision collision) { 
+	
+		Destroy (gameObject);
+
+		if (collision.transform.tag == "Asteroid") {
+			AsteroidBehaviour ab = collision.gameObject.GetComponent<AsteroidBehaviour> ();
+			ab.SetDamage (damage);
+		}
+	}
 }

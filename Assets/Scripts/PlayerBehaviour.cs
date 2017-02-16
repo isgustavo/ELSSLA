@@ -69,8 +69,8 @@ public class PlayerBehaviour : NetworkBehaviour {
 
 		float tiltValue = GetTiltValue();
 		Vector3 oldAngles = this.transform.eulerAngles;
-		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (1 * ROTATE_AMOUNT));
-		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
+		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (1 * ROTATE_AMOUNT));
+		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
 	}
 
 	private void Movement () {
@@ -139,15 +139,14 @@ public class PlayerBehaviour : NetworkBehaviour {
 
 	[Command]
 	void CmdFire() {
-
+		
 		var bullet = (GameObject)Instantiate(
 			bulletPrefab,
 			bulletSpawn.position,
 			bulletSpawn.rotation);
 
-
-
 		NetworkServer.Spawn(bullet);
 
 	}
+
 }

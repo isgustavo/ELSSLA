@@ -98,4 +98,6 @@ public class NetworkManagerBehaviour : NetworkManager {
 		public int chosenClass;
 	}
 
+
+
 }
