@@ -14,7 +14,7 @@ public class BulletBehaviour : NetworkBehaviour {
 	public bool spread = false;
 	private Quaternion rotTarget;
 
-	public float bulletSpeed = 5f;
+	public float bulletSpeed = 10f;
 
 	public float lifetime = 3.0f;
 	public float speed = 5.0f;
@@ -70,11 +70,15 @@ public class BulletBehaviour : NetworkBehaviour {
 
 	void OnCollisionEnter(Collision collision) { 
 	
+
+		GameObject hit = collision.gameObject;
+		AsteroidBehaviour asteroid = hit.GetComponent<AsteroidBehaviour>();
+		if (asteroid != null)
+		{
+			asteroid.TakeDamage(damage);
+		}
+
 		Destroy (gameObject);
 
-		if (collision.transform.tag == "Asteroid") {
-			AsteroidBehaviour ab = collision.gameObject.GetComponent<AsteroidBehaviour> ();
-			ab.SetDamage (damage);
-		}
 	}
 }

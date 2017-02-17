@@ -48,21 +48,12 @@ public class PlayerBehaviour : NetworkBehaviour {
 		//}
 		//transform.position = newPos;
 
+		Movement ();
+
 		Rotation ();
-
-
 
 		Shooting ();
 		timeTilNextFire -= Time.deltaTime;
-	}
-
-
-	void FixedUpdate () {
-
-		if (!isLocalPlayer)
-			return;
-
-		Movement ();
 	}
 
 	private void Rotation () {
