@@ -4,8 +4,16 @@ using UnityEngine;
 
 public class TapToPlayBehaviour : MonoBehaviour {
 
+	private NetworkManagerBehaviour networkManager;
+
+	void Start () {
+
+		networkManager = GameObject.FindGameObjectWithTag ("NetworkManager").GetComponent<NetworkManagerBehaviour> ();
+	}
 
 	void OnMouseUp() {
-		GameManagerBehaviour.Instance.StartAsAHost ();
+		Debug.Log ("OnMauseUp");
+		networkManager.StartAsAHost ();
+
 	}
 }

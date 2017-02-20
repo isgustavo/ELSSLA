@@ -85,7 +85,7 @@ public class GameManagerBehaviour : ObserverBehaviour {
 		tapToPlay.gameObject.SetActive(false);
 		tapToJoin.gameObject.SetActive(true);
 
-		Debug.Log (networkManager.discovery.Server.ServerIp);
+		//Debug.Log (networkManager.discovery.Server.ServerIp);
 
 	}
 

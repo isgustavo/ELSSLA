@@ -1,18 +1,4 @@
-﻿// Copyright 2017 ISGUSTAVO
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//          http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -20,55 +6,94 @@ using UnityEngine.Networking;
 public class NetworkManagerBehaviour : NetworkManager {
 
 	private const int NETWORK_PORT = 7777;
-
-	[SerializeField]
-	public NetworkDiscoveryBehaviour discovery;
+	private NetworkDiscoveryBehaviour discovery;
 
 
-	/// <summary>
-	/// This starts a network "host" - a server and client in the same application.
-	/// </summary>
-	/// <returns>The client object created - this is a "local client".</returns>
-	public override NetworkClient StartHost () {
-		base.networkAddress = Network.player.ipAddress;
-		base.networkPort = NETWORK_PORT;
+	void Start () {
 
-		return base.StartHost ();
+		discovery = GameObject.FindGameObjectWithTag ("NetworkDiscovery").GetComponent<NetworkDiscoveryBehaviour> ();
 	}
 
-	public void StartClient() {
-		
-		base.networkAddress = discovery.Server.ServerIp;
-		base.StartClient ();
+	public void StartAsAHost () {
+		Debug.Log ("StartAsAHost");
+		networkAddress = Network.player.ipAddress;
+		networkPort = NETWORK_PORT;
 
-		Debug.Log ("Client joined");
+		StartHost ();
+
+
 	}
 
 	public override void OnStartHost () {
-
+		Debug.Log ("OnStartHost");
 		discovery.StopBroadcast ();
 
 		discovery.broadcastData = networkPort.ToString ();
 		discovery.StartAsServer ();
-		Debug.Log ("Host on");
+
+
 	}
+
+	public void StartAsAClient() {
+		Debug.Log ("StartAsAClient");
+		networkAddress = discovery.Server.ServerIp;
+		StartClient ();
+
+
+	}
+
+
 
 	public override void OnStartClient (NetworkClient client) {
-		
-		client.RegisterHandler(MsgType.Connect, OnConnected);
-
+		Debug.Log ("OnStartClient");
+		//client.RegisterHandler(MsgType.Connect, OnConnected);
 		base.OnStartClient (client);
 
+
 	}
 
 
-	public void OnConnected(UnityEngine.Networking.NetworkMessage netMsg) {
-		NetworkMessage message = new NetworkMessage();
+	//public void OnConnected(UnityEngine.Networking.NetworkMessage netMsg) {
+	//	Debug.Log ("OnConnected");
+	//	NetworkMessage message = new NetworkMessage();
 		//message.chosenClass = GameManagerBehaviour.TEST_SHIP; // mock choose
 
-		ClientScene.AddPlayer (client.connection, 0, message);
-		Debug.Log ("OnConnected");
+	//	ClientScene.AddPlayer (client.connection, 0, message);
+
+
+	//
+
+	//public override void OnClientConnect (NetworkConnection conn)
+	//{
+		//base.OnClientConnect (conn);
+	//	Debug.Log ("OnClientConnect");
+	//	NetworkMessage message = new NetworkMessage();
+		//if (string.IsNullOrEmpty (this.onlineScene) || this.onlineScene == this.offlineScene){
+			//ClientScene.Ready (conn);
+			//if (this.autoCreatePlayer)
+			//{
+	//			ClientScene.AddPlayer(conn, 0, message);
+			//}
+		//}
+
+	//}
+
+	//public override void OnClientSceneChanged (NetworkConnection conn)
+	//
+		//base.OnClientSceneChanged (conn);
+	//}
+
+	public override void OnClientSceneChanged(NetworkConnection conn)
+	{
+		NetworkMessage message = new NetworkMessage ();
+		ClientScene.AddPlayer(conn, 0, message);
 	}
+
+	public override void OnClientConnect(NetworkConnection conn)
+	{
+		//base.OnClientConnect(conn);
+	}
+
 
 	public override void OnServerAddPlayer (NetworkConnection conn, short playerControllerId, NetworkReader extraMessageReader)
 	{
@@ -80,7 +105,7 @@ public class NetworkManagerBehaviour : NetworkManager {
 			//Debug.Log ("number == 1");
 
 		GameObject[] li = spawnPrefabs.ToArray();
-		GameObject o = li [1];
+		GameObject o = li [0];
 
 		var player = (GameObject)GameObject.Instantiate (o, transform.position, Quaternion.identity);
 			NetworkServer.AddPlayerForConnection (conn, player, playerControllerId);
