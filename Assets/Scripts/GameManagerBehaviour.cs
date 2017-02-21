@@ -18,9 +18,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-public abstract class ObserverBehaviour : MonoBehaviour {
-	public abstract void OnNotify ();
-}
+
 	
 public class GameManagerBehaviour : ObserverBehaviour {
 

@@ -6,12 +6,13 @@ using UnityEngine.Networking;
 public class NetworkManagerBehaviour : NetworkManager {
 
 	private const int NETWORK_PORT = 7777;
+	[SerializeField]
 	private NetworkDiscoveryBehaviour discovery;
 
 
 	void Start () {
 
-		discovery = GameObject.FindGameObjectWithTag ("NetworkDiscovery").GetComponent<NetworkDiscoveryBehaviour> ();
+		//discovery = GameObject.FindGameObjectWithTag ("NetworkDiscovery").GetComponent<NetworkDiscoveryBehaviour> ();
 	}
 
 	public void StartAsAHost () {

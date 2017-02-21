@@ -31,7 +31,7 @@ public class NetworkDiscoveryBehaviour : NetworkDiscovery {
 	public ObserverBehaviour observer;
 
 	void Start () {
-
+		Debug.Log ("Network Discovery");
 		Initialize();
 		StartAsClient();
 	}

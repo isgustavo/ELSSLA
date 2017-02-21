@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class TapToJoinBehaviour : MonoBehaviour {
 
+	[SerializeField]
+	private NetworkManagerBehaviour networkManager;
+
 	void OnMouseUp() {
-		GameManagerBehaviour.Instance.StartAsAClient ();
+		networkManager.StartAsAClient ();
+
 	}
+		
 }

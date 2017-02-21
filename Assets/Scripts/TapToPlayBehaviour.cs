@@ -4,16 +4,13 @@ using UnityEngine;
 
 public class TapToPlayBehaviour : MonoBehaviour {
 
+	[SerializeField]
 	private NetworkManagerBehaviour networkManager;
 
-	void Start () {
-
-		networkManager = GameObject.FindGameObjectWithTag ("NetworkManager").GetComponent<NetworkManagerBehaviour> ();
-	}
-
 	void OnMouseUp() {
-		Debug.Log ("OnMauseUp");
 		networkManager.StartAsAHost ();
 
 	}
+		
+		
 }
