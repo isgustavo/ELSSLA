@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
+[NetworkSettings(channel=0, sendInterval=0.0003f)]
 public class PlayerSyncRotationBehaviour : NetworkBehaviour {
 
 	[SyncVar (hook = "OnPlayerRotSynced")]
 	private Quaternion syncPlayerRotation;
 
-	[SerializeField]
-	private float lerpRate = 10f;
+	private float normalLerpRate = 20f;
+	private float fasterLerpRate = 45f;
 	private Quaternion lastPlayerRotation;
-	private float ignoreZRotation = 5f;
+	//private float threshoud = .2f;
 
 	private List<Quaternion> syncPlayerRotationList = new List<Quaternion>();
+	//private float closeEnough = 0.11f;
 
 	void Update () {
 
@@ -29,12 +31,21 @@ public class PlayerSyncRotationBehaviour : NetworkBehaviour {
 
 		if (!isLocalPlayer) {
 
+			float lerpRate = 0;
+
+			if (syncPlayerRotationList.Count < 10) {
+				lerpRate = normalLerpRate;
+			} else {
+				lerpRate = fasterLerpRate;
+			}
+
 			if (syncPlayerRotationList.Count > 0) {
-				
-				//Vector3 rotation = new Vector3 (0, 0, syncPlayerZRotationList [0]);
 				//transform.rotation = Quaternion.Lerp (transform.rotation, Quaternion.Euler (rotation), Time.deltaTime * lerpRate);
 				transform.rotation = Quaternion.Lerp (transform.rotation, syncPlayerRotationList [0], Time.deltaTime * lerpRate);
-				syncPlayerRotationList.RemoveAt(0);
+
+				//if () {
+					syncPlayerRotationList.RemoveAt (0);
+				//}
 			}
 		}
 	}
@@ -59,6 +70,7 @@ public class PlayerSyncRotationBehaviour : NetworkBehaviour {
 
 		syncPlayerRotation = latestPlayerRotation;
 		syncPlayerRotationList.Add (syncPlayerRotation);
+		Debug.Log ("list Rotation:" + syncPlayerRotationList.Count);
 	}
 		
 }

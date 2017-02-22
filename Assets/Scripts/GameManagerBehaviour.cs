@@ -18,8 +18,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-
-	
 public class GameManagerBehaviour : ObserverBehaviour {
 
 	public enum EGameState {
