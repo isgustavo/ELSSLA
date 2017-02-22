@@ -22,6 +22,12 @@ public class PlayerPositionBehaviour : NetworkBehaviour {
 			return;
 		}
 
+		if (transform.position.z <= -6f) {
+			Camera2DFollow camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<Camera2DFollow>();
+			camera.setTarget (transform);
+		}
+
+
 		if (MoveButtonBehaviour.isMoveOn) {
 
 			rigidbody.velocity = transform.up * speed;
@@ -36,11 +42,4 @@ public class PlayerPositionBehaviour : NetworkBehaviour {
 		}
 	}
 
-	public override void OnStartLocalPlayer ()
-	{
-		base.OnStartLocalPlayer ();
-
-		Camera2DFollow camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<Camera2DFollow>();
-		camera.setTarget (transform);
-	}
 }

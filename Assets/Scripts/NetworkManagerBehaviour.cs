@@ -108,7 +108,8 @@ public class NetworkManagerBehaviour : NetworkManager {
 		GameObject[] li = spawnPrefabs.ToArray();
 		GameObject o = li [0];
 
-		var player = (GameObject)GameObject.Instantiate (o, transform.position, Quaternion.identity);
+
+		var player = (GameObject)GameObject.Instantiate (o, new Vector3(0,0, 6) , Quaternion.identity);
 			NetworkServer.AddPlayerForConnection (conn, player, playerControllerId);
 		//} else {
 		//	Debug.Log ("number == 0");

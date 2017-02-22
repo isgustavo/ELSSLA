@@ -12,10 +12,8 @@ public class PlayerSyncRotationBehaviour : NetworkBehaviour {
 	private float normalLerpRate = 20f;
 	private float fasterLerpRate = 45f;
 	private Quaternion lastPlayerRotation;
-	//private float threshoud = .2f;
 
 	private List<Quaternion> syncPlayerRotationList = new List<Quaternion>();
-	//private float closeEnough = 0.11f;
 
 	void Update () {
 
@@ -70,7 +68,6 @@ public class PlayerSyncRotationBehaviour : NetworkBehaviour {
 
 		syncPlayerRotation = latestPlayerRotation;
 		syncPlayerRotationList.Add (syncPlayerRotation);
-		Debug.Log ("list Rotation:" + syncPlayerRotationList.Count);
 	}
 		
 }

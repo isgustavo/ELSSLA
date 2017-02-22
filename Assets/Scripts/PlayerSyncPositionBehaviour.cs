@@ -12,7 +12,7 @@ public class PlayerSyncPositionBehaviour : NetworkBehaviour {
 	private float normalLerpRate = 20f;
 	private float fasterLerpRate = 45f;
 	private Vector3 lastPlayerPosition;
-	private float threshoud = .2f;
+	private float threshold = .2f;
 
 	private List<Vector3> syncPlayerPositionList = new List<Vector3>();
 	private float closeEnough = 0.11f;
@@ -54,7 +54,7 @@ public class PlayerSyncPositionBehaviour : NetworkBehaviour {
 	[Client]
 	void TransmitRotation () {
 
-		if (isLocalPlayer && Vector3.Distance(transform.position, lastPlayerPosition) > threshoud) {
+		if (isLocalPlayer && Vector3.Distance(transform.position, lastPlayerPosition) > threshold) {
 			lastPlayerPosition = transform.position;
 			CmdSyncPosition (lastPlayerPosition);
 		}	
@@ -71,7 +71,6 @@ public class PlayerSyncPositionBehaviour : NetworkBehaviour {
 
 		syncPlayerPosition = position;
 		syncPlayerPositionList.Add (syncPlayerPosition);
-		Debug.Log ("list Position:" + syncPlayerPositionList.Count);
 
 	}
 }
