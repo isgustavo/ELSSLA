@@ -57,6 +57,6 @@ public class PlayerManagerBehaviour : NetworkBehaviour {
 		base.OnStartLocalPlayer ();
 
 		CameraFollowBehaviour camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<CameraFollowBehaviour>();
-		camera.player = gameObject;
+		camera.target = gameObject;
 	}
 }

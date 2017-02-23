@@ -4,25 +4,16 @@ using UnityEngine;
 
 public class CameraFollowBehaviour : MonoBehaviour {
 
-	public GameObject player;
-	private Vector3 offset;   
-
-
-	void Start () {
-
-		offset.x = transform.position.x - player.transform.position.x;
-		offset.y = transform.position.y - player.transform.position.y;
-
-	}
-
+	public GameObject target;
 	
-	void LateUpdate () 
-	{
+	void LateUpdate () {
 
-		Vector3 position = new Vector3 (player.transform.position.x + offset.x,
-			player.transform.position.y+ offset.y,
-			-10f);
-		//transform.position.x = player.transform.position.x + offset.x;
-		transform.position = position;
+		if (target != null) {
+			Vector3 position = new Vector3 (target.transform.position.x ,
+				                  target.transform.position.y ,
+				                  -10f);
+			
+			transform.position = position;
+		}
 	}
 }
