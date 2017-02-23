@@ -5,7 +5,15 @@ using UnityEngine.Networking;
 
 public class BulletBehaviour : NetworkBehaviour {
 
-	private Rigidbody _rigidbody;
+	[SyncVar]
+	public string playerId;
+
+
+
+
+
+
+/*	private Rigidbody _rigidbody;
 	//private ParticleSystem _rocket;
 	public int damage = 3;
 
@@ -43,7 +51,7 @@ public class BulletBehaviour : NetworkBehaviour {
 		}
 		transform.Translate (Vector3.up * Time.deltaTime * speed);
 		//transform.position += transform.forward * Time.deltaTime * speed;
-	}*/
+	}
 
 	void FixedUpdate () {
 		_rigidbody.velocity = transform.up * bulletSpeed;
@@ -75,10 +83,10 @@ public class BulletBehaviour : NetworkBehaviour {
 		AsteroidBehaviour asteroid = hit.GetComponent<AsteroidBehaviour>();
 		if (asteroid != null)
 		{
-			asteroid.TakeDamage(damage);
+			//asteroid.TakeDamage(damage);
 		}
 
 		Destroy (gameObject);
 
-	}
+	}*/
 }

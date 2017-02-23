@@ -20,6 +20,7 @@ public class NetworkManagerBehaviour : NetworkManager {
 		networkAddress = Network.player.ipAddress;
 		networkPort = NETWORK_PORT;
 
+		//StopHost ();
 		StartHost ();
 
 
@@ -87,6 +88,7 @@ public class NetworkManagerBehaviour : NetworkManager {
 	public override void OnClientSceneChanged(NetworkConnection conn)
 	{
 		NetworkMessage message = new NetworkMessage ();
+		message.chosenClass = TapToJoinBehaviour.ConnectionTesterStatus;
 		ClientScene.AddPlayer(conn, 0, message);
 	}
 
@@ -99,18 +101,32 @@ public class NetworkManagerBehaviour : NetworkManager {
 	public override void OnServerAddPlayer (NetworkConnection conn, short playerControllerId, NetworkReader extraMessageReader)
 	{
 
-		//NetworkMessage message = extraMessageReader.ReadMessage< NetworkMessage>();
-		//int selectedClass = message.chosenClass;
-		//Debug.Log(selectedClass);
-		//if (selectedClass == 1) {
-			//Debug.Log ("number == 1");
+		NetworkMessage message = extraMessageReader.ReadMessage< NetworkMessage>();
+		int selectedClass = message.chosenClass;
 
-		GameObject[] li = spawnPrefabs.ToArray();
+		GameObject[] li = spawnPrefabs.ToArray ();
 		GameObject o = li [0];
 
+		//Debug.Log(selectedClass);
+		if (selectedClass == 1) {
+			//Debug.Log ("number == 1");
 
-		var player = (GameObject)GameObject.Instantiate (o, new Vector3(0,0, 6) , Quaternion.identity);
+			//GameObject[] li = spawnPrefabs.ToArray ();
+			//GameObject o = li [0];
+
+
+			var player = (GameObject)GameObject.Instantiate (o, new Vector3 (-3, 0, 6), Quaternion.identity);
+			player.name = "Client";
+
 			NetworkServer.AddPlayerForConnection (conn, player, playerControllerId);
+
+		} else {
+			var player = (GameObject)GameObject.Instantiate (o, new Vector3 (3, 0, 6), Quaternion.identity);
+			player.name = "Host";
+
+			NetworkServer.AddPlayerForConnection (conn, player, playerControllerId);
+		}
+			
 		//} else {
 		//	Debug.Log ("number == 0");
 		//	var player = (GameObject)GameObject.Instantiate (Resources.Load("spaceship_1"), transform.position, Quaternion.identity);

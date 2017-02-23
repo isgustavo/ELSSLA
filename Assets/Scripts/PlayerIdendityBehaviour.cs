@@ -7,7 +7,6 @@ public class PlayerIdendityBehaviour : NetworkBehaviour {
 
 	[SyncVar] public string playerUniqueName;
 	private NetworkInstanceId playerNetId;
-	//private Transform _transform;
 
 	public override void OnStartClient ()
 	{

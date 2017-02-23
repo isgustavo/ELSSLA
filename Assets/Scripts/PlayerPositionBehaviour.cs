@@ -6,12 +6,12 @@ using UnityStandardAssets._2D;
 
 public class PlayerPositionBehaviour : NetworkBehaviour {
 
-	private Rigidbody rigidbody;
+	private Rigidbody _rigidbody;
 	private float speed = 5f;
 	private float movementSpeed = 0f;
 
 	void Start () {
-		rigidbody = GetComponent<Rigidbody> ();
+		_rigidbody = GetComponent<Rigidbody> ();
 
 	}
 	
@@ -22,22 +22,16 @@ public class PlayerPositionBehaviour : NetworkBehaviour {
 			return;
 		}
 
-		if (transform.position.z <= -6f) {
-			Camera2DFollow camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<Camera2DFollow>();
-			camera.setTarget (transform);
-		}
-
-
 		if (MoveButtonBehaviour.isMoveOn) {
 
-			rigidbody.velocity = transform.up * speed;
+			_rigidbody.velocity = transform.up * speed;
 
 			movementSpeed = speed;
 		} else {
 
 			if (movementSpeed > 0) {
 				movementSpeed -= 0.05f;
-				rigidbody.velocity = transform.up * movementSpeed;
+				_rigidbody.velocity = transform.up * movementSpeed;
 			}
 		}
 	}

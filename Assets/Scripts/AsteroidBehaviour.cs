@@ -18,13 +18,13 @@ public class AsteroidBehaviour : NetworkBehaviour {
 
 	void Start () {
 
-		_renderer = GetComponentInChildren<Renderer> ();
-		_rigidbody = GetComponent<Rigidbody> ();
+		//_renderer = GetComponentInChildren<Renderer> ();
+		//_rigidbody = GetComponent<Rigidbody> ();
 		//_rigidbody.velocity = transform.up * 0.5f;
 
 	}
 
-	public void TakeDamage(int amount) {
+	/*public void TakeDamage(int amount) {
 
 		if (!isServer) {
 			return;
@@ -41,10 +41,10 @@ public class AsteroidBehaviour : NetworkBehaviour {
 			//gameObject.SetActive (false);
 
 		}
-	}
+	}*/
 
 
-	[ClientRpc]
+	/*[ClientRpc]
 	void RpcDestroy () {
 		Debug.Log (gameObject);
 		((ParticleSystem) Instantiate (_asteroidFragment, transform.position, transform.rotation)).Play();
@@ -56,7 +56,7 @@ public class AsteroidBehaviour : NetworkBehaviour {
 
 		}
 
-	}
+	}*/
 
 	void Update () {
 
@@ -82,14 +82,14 @@ public class AsteroidBehaviour : NetworkBehaviour {
 			gameObject.SetActive (false);
 
 		} else {*/
-			Vector3 newPosition = transform.position;
+			/*Vector3 newPosition = transform.position;
 
 			if (transform.position.z > 0) {
 				newPosition.z = Mathf.Lerp (transform.position.z, 0, Time.deltaTime * 4f);
 			} else {
 				newPosition.z = -0f;
 			}
-			transform.position = newPosition;
+			transform.position = newPosition;*/
 		//}
 
 	}

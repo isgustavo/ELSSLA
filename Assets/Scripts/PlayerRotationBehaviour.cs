@@ -15,6 +15,11 @@ public class PlayerRotationBehaviour : NetworkBehaviour {
 
 		float tiltValue = GetTiltValue();
 		Vector3 oldAngles = this.transform.eulerAngles;
+		//if (TapToJoinBehaviour.ConnectionTesterStatus  == 1) {
+		//	this.transform.eulerAngles = new Vector3 (0, 0, -90f);
+		//} else {
+		//	this.transform.eulerAngles = new Vector3 (0, 0, 90f);
+		//}
 		//this.transform.eulerAngles = new Vector3(0, 0, oldAngles.z + (1 * ROTATE_AMOUNT));
 		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
 
