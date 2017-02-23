@@ -18,6 +18,7 @@ public class PlayerManagerBehaviour : NetworkBehaviour {
 
 		scoreGUI = GameObject.Find ("Score").GetComponent<TextMesh> ();
 		score = 0; 
+
 	}
 
 
