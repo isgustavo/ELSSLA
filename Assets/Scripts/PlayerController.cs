@@ -104,6 +104,7 @@ public class PlayerController : NetworkBehaviour {
 		Camera2DFollow camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<Camera2DFollow>();
 
 		camera.setTarget (transform);
+
 	}
 
 

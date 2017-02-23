@@ -50,6 +50,13 @@ public class PlayerManagerBehaviour : NetworkBehaviour {
 			
 			score = 0;
 		}
+	}
 
+	public override void OnStartLocalPlayer ()
+	{
+		base.OnStartLocalPlayer ();
+
+		CameraFollowBehaviour camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<CameraFollowBehaviour>();
+		camera.player = gameObject;
 	}
 }
