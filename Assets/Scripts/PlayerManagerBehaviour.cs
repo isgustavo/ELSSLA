@@ -13,6 +13,7 @@ public class PlayerManagerBehaviour : NetworkBehaviour {
 	public bool isDead = false;
 
 	public TextMesh scoreGUI;
+	public ParticleSystem explosion;
 
 	void Start () {
 
@@ -34,7 +35,7 @@ public class PlayerManagerBehaviour : NetworkBehaviour {
 	}
 
 	void OnUpdateStatus(bool value) {
-
+		//Debug.Log (gameObject.name);
 		isDead = value;
 		if (isDead) {
 
@@ -42,10 +43,12 @@ public class PlayerManagerBehaviour : NetworkBehaviour {
 			//save status
 			//call ads
 
+
 			gameObject.SetActive (false);
+			Instantiate (explosion, transform.position, transform.rotation).Play();
+
 		} else {
-
-
+			
 			
 			score = 0;
 		}
@@ -58,4 +61,5 @@ public class PlayerManagerBehaviour : NetworkBehaviour {
 		CameraFollowBehaviour camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<CameraFollowBehaviour>();
 		camera.target = gameObject;
 	}
+
 }
