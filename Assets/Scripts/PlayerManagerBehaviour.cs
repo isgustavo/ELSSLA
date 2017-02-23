@@ -12,14 +12,12 @@ public class PlayerManagerBehaviour : NetworkBehaviour {
 	[SyncVar (hook="OnUpdateStatus")]
 	public bool isDead = false;
 
-	public Text scoreGUI;
+	public TextMesh scoreGUI;
 
 	void Start () {
 
-		scoreGUI = GameObject.Find ("PQP").GetComponent<Text> ();
+		scoreGUI = GameObject.Find ("Score").GetComponent<TextMesh> ();
 		score = 0; 
-
-		scoreGUI.text = "000";
 	}
 
 
