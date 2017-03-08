@@ -27,6 +27,9 @@ public class PlayerPositionBehaviour : NetworkBehaviour {
 			_rigidbody.velocity = transform.up * speed;
 
 			movementSpeed = speed;
+
+
+
 		} else {
 
 			if (movementSpeed > 0) {

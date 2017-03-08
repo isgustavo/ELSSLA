@@ -25,7 +25,7 @@ public class InitialBehaviour : MonoBehaviour {
 		} else {
 			newPosition.z = zFinalPosition;
 			transform.position = newPosition;
-			gameObject.GetComponent<InitialBehaviour> ().enabled = false;
+			enabled = false;
 		}
 	}
 }

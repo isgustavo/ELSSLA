@@ -4,14 +4,34 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-public class GameManagerBehaviour : MonoBehaviour {
+public class GameManagerBehaviour : NetworkBehaviour {
+
+	public GameObject m_asteroidSpawnManager;
+
+	public override void OnStartServer ()
+	{
+		base.OnStartServer ();
+		Debug.Log ("isLocalPlayer:" + isLocalPlayer);
+		Debug.Log ("isClient:" + isClient);
+		Debug.Log ("isServer:" + isServer);
+
+		m_asteroidSpawnManager = Instantiate (m_asteroidSpawnManager);
+		NetworkServer.Spawn (m_asteroidSpawnManager);
+
+	}
 
 
+
+
+
+
+
+	/*
 	public GameObject gameGUI;
 	public GameObject deadGUI;
 
 
-	/*
+
 	public enum EGameState {
 			MainMenu,
 			Game,

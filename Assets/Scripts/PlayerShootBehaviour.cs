@@ -11,6 +11,15 @@ public class PlayerShootBehaviour : NetworkBehaviour {
 	public float timeBetweenFires = .3f;
 	private float timeTilNextFire = 0.0f;
 
+
+	AsteroidSpawnManager spawnManager;
+
+	void Start () {
+
+		//spawnManager = GameObject.Find("AsteroidSpawnManager(Clone)").GetComponent<AsteroidSpawnManager> ();
+	}
+
+
 	void Update () {
 
 		if (!isLocalPlayer)
@@ -39,5 +48,21 @@ public class PlayerShootBehaviour : NetworkBehaviour {
 		bullet.GetComponent<BulletBehaviour> ().playerId = gameObject.name;
 
 		NetworkServer.Spawn(bullet);
+
+
+		//StartCoroutine (DestroyAsteroid (bullet, 5.0f));
+	}
+
+
+	public IEnumerator DestroyAsteroid(GameObject go, float timer) {
+
+		while(true) 
+		{ 
+			yield return new WaitForSeconds (timer);
+			//spawnManager.UnSpawnObject();
+		}
+
+
+
 	}
 }

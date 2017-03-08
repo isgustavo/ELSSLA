@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class PlayerManagerBehaviour : NetworkBehaviour {
 
-	[SyncVar (hook="OnUpdateScore")]
+	[SyncVar]
 	public int score = 0; 
 	public int highscore = 0;
 	public int friend = 0;
@@ -28,12 +28,11 @@ public class PlayerManagerBehaviour : NetworkBehaviour {
 		programmer = 10;
 
 	}
-
-
-	void OnUpdateScore(int value) {
 		
-		score += value;
 
+	public void Score() {
+
+		score += 100;
 	}
 
 	void OnUpdateStatus(bool value) {

@@ -115,13 +115,13 @@ public class NetworkManagerBehaviour : NetworkManager {
 			//GameObject o = li [0];
 
 
-			var player = (GameObject)GameObject.Instantiate (o, new Vector3 (-3, 0, 6), Quaternion.identity);
+			var player = (GameObject)GameObject.Instantiate (o, new Vector3 (-1, 0, -6), Quaternion.identity);
 			player.name = "Client";
 
 			NetworkServer.AddPlayerForConnection (conn, player, playerControllerId);
 
 		} else {
-			var player = (GameObject)GameObject.Instantiate (o, new Vector3 (3, 0, 6), Quaternion.identity);
+			var player = (GameObject)GameObject.Instantiate (o, new Vector3 (1, 0, -6), Quaternion.identity);
 			player.name = "Host";
 
 			NetworkServer.AddPlayerForConnection (conn, player, playerControllerId);
