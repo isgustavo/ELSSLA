@@ -5,30 +5,36 @@ using UnityEngine.Networking;
 
 public class FragmentSpawnManager : NetworkBehaviour {
 
-	private int twoPartsfragmentPoolSize = 6;
-	private int threePartsfragmentPoolSize = 0;
-	private Vector3 noUsePosition = new Vector3(0, 0, -20);
+	private int twoPartsfragmentPoolSize = 8;
+	private int threePartsfragmentPoolSize = 4;
 
 	public GameObject twoPartsFragmentPrefab;
 	public GameObject threePartsFragmentPrefab;
-	public List<GameObject> fragmentsPool = new List<GameObject> ();
+
+	private List<GameObject> fragmentsPool = new List<GameObject> ();
+
+	private AsteroidSpawnManager asteroidSpawnManager;
 
 	void Start () {
 
+		asteroidSpawnManager = GetComponent<AsteroidSpawnManager> ();
+
 		for (int i = 0; i < twoPartsfragmentPoolSize; i++) {
 			
-			GameObject twoParts = (GameObject)Instantiate(twoPartsFragmentPrefab, noUsePosition, Quaternion.identity);
+			GameObject twoParts = (GameObject)Instantiate(twoPartsFragmentPrefab);
 			twoParts.transform.name = "twoPartsfragment" + i;
 			twoParts.GetComponent<FragmentManagerBehaviour> ().pushDelegate += new PushDelegate (this.Push);
+
 			fragmentsPool.Add(twoParts);
 
 			NetworkServer.Spawn (twoParts);
 
 			if (i < threePartsfragmentPoolSize) {
 
-				GameObject threeParts = (GameObject)Instantiate(threePartsFragmentPrefab, noUsePosition, Quaternion.identity);
+				GameObject threeParts = (GameObject)Instantiate(threePartsFragmentPrefab);
 				threeParts.transform.name = "threePartsfragment" + i;
 				threeParts.GetComponent<FragmentManagerBehaviour> ().pushDelegate += new PushDelegate (this.Push);
+
 				fragmentsPool.Add(threeParts);
 
 				NetworkServer.Spawn (threeParts);
@@ -37,21 +43,16 @@ public class FragmentSpawnManager : NetworkBehaviour {
 		}
 	}
 
-	public bool ExistFragmentAvailable(){
-
-		return fragmentsPool.Count == (twoPartsfragmentPoolSize + threePartsfragmentPoolSize) ? true : false;
-
-	}
-
 	void Push(GameObject fragment) {
-		//Debug.Log ("push");
-		if (fragmentsPool != null) {
 
+		if (fragmentsPool.Count > 0) {
 			fragmentsPool.Add (fragment);
+			asteroidSpawnManager.SetAsteroidToUse ();
 		}
+
 	}
 
-    GameObject Pop () {
+	GameObject Pop () {
 
 		if (fragmentsPool.Count > 0) {
 
@@ -63,14 +64,19 @@ public class FragmentSpawnManager : NetworkBehaviour {
 		return null;
 	}
 
-	public void SetFragmentToUse (Vector3 position) {
+	public bool ExistFragmentAvailable(){
+
+		return fragmentsPool.Count == (twoPartsfragmentPoolSize + threePartsfragmentPoolSize) ? true : false;
+
+	}
+
+	public void SetFragmentToUse (Vector3 position, Quaternion rotation) {
 
 		GameObject fragment = Pop ();
 		if (fragment != null) {
-			fragment.transform.position = position;
 
 			FragmentManagerBehaviour fragmentManager = fragment.GetComponent<FragmentManagerBehaviour> ();
-			fragmentManager.OnChangeUse (true);
+			fragmentManager.OnChangeUse (true, position, rotation);
 		}
 	}
 		

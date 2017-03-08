@@ -5,13 +5,19 @@ using UnityEngine.Networking;
 
 public class FragmentManagerBehaviour: NetworkBehaviour {
 
-	//[SyncVar]
 	public bool inUse = false;
 	private Vector3 noUsePosition = new Vector3(0, 0, -20f);
 
 	public event PushDelegate pushDelegate;
 
 	public GameObject[] fragments;
+
+	void Awake () {
+
+		transform.position = noUsePosition;
+		transform.rotation = Quaternion.identity;
+
+	}
 
 	void Update () {
 
@@ -23,21 +29,24 @@ public class FragmentManagerBehaviour: NetworkBehaviour {
 				}
 			}
 
-			OnChangeUse (false);
+			OnChangeUse (false, noUsePosition, Quaternion.identity);
 		}
 	}
 
-	public void OnChangeUse (bool value) {
-		Debug.Log ("FragmentManager cahnge Use");
+	public void OnChangeUse (bool value, Vector3 position, Quaternion rotation) {
+		
 		if (!isServer)
 			return;
 
 		if (value == false) {
-			transform.position = noUsePosition;
 			pushDelegate (gameObject);
+			transform.position = position;
 
-		} else if (value == true) {
 
+		} else {
+
+			transform.position = position;
+			transform.rotation = rotation;
 			foreach (var frag in fragments) {
 
 				frag.GetComponent<FragmentBehaviour>().OnChangeUse (value);

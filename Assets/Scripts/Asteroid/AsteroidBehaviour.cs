@@ -5,7 +5,6 @@ using UnityEngine.Networking;
 
 public class AsteroidBehaviour : NetworkBehaviour {
 
-	//[SyncVar(hook = "OnChangeUse")]
 	public bool inUse = true;
 	private Vector3 noUsePosition = new Vector3(0, 0, -20);
 
@@ -14,6 +13,12 @@ public class AsteroidBehaviour : NetworkBehaviour {
 	private Rigidbody _rigidbory;
 	private SphereCollider _collider;
 
+	void Awake () {
+
+		transform.position = AsteroidUtils.GetRandomPosition ();
+		transform.rotation = Random.rotation;
+
+	}
 
 	void Start () {
 
@@ -21,6 +26,7 @@ public class AsteroidBehaviour : NetworkBehaviour {
 			return;
 		
 		_rigidbory = gameObject.GetComponent<Rigidbody> ();
+		_rigidbory.velocity = AsteroidUtils.GetRandomVelocity ();
 		_collider = gameObject.GetComponent<SphereCollider> ();
 	}
 
@@ -52,11 +58,14 @@ public class AsteroidBehaviour : NetworkBehaviour {
 			_rigidbory.velocity = Vector3.zero;
 
 
-		} else if (value == true) {
+		} else {
 
-			transform.position = new Vector3 (0, 0, -6);
+			transform.position = AsteroidUtils.GetRandomPosition ();
+			_rigidbory.velocity = AsteroidUtils.GetRandomVelocity ();
 			_collider.enabled = true;
 		}
 	}
+
+
 		
 }
