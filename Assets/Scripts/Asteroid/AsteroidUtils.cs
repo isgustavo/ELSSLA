@@ -13,7 +13,7 @@ public class AsteroidUtils : MonoBehaviour {
 
 	public static Vector3 GetRandomVelocity () {
 
-		return new Vector3 (Random.Range(-0.01f, 0.01f), Random.Range(-0.01f, 0.01f), 0);
+		return new Vector3 (Random.Range(-0.1f, 0.1f), Random.Range(-0.1f, 0.1f), 0);
 	}
 
 }
