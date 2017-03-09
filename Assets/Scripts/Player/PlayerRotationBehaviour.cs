@@ -5,35 +5,19 @@ using UnityEngine.Networking;
 
 public class PlayerRotationBehaviour : NetworkBehaviour {
 
-	private const float ROTATE_AMOUNT = 2;
+	private const float ROTATE_AMOUNT = 2f;
 
 	void Update () {
 
-		if (!isLocalPlayer) {
+		if (!isLocalPlayer)
 			return;
-		}
 
 		float tiltValue = GetTiltValue();
 		Vector3 oldAngles = this.transform.eulerAngles;
-		//if (TapToJoinBehaviour.ConnectionTesterStatus  == 1) {
-		//	this.transform.eulerAngles = new Vector3 (0, 0, -90f);
-		//} else {
-		//	this.transform.eulerAngles = new Vector3 (0, 0, 90f);
-		//}
-		//this.transform.eulerAngles = new Vector3(0, 0, oldAngles.z + (1 * ROTATE_AMOUNT));
 		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
-
-
-	
-		if(Input.GetKeyDown(KeyCode.LeftArrow)) {
-			this.transform.eulerAngles = new Vector3(0, 0, oldAngles.z + (1 * 8f));
-
-		} else if (Input.GetKeyDown(KeyCode.RightArrow)) {
-			this.transform.eulerAngles = new Vector3(0, 0, oldAngles.z + (1 * -8f));
-		}
+		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (1 * ROTATE_AMOUNT));
 
 	}
-
 
 	float GetTiltValue() {
 		float TILT_MIN = 0.05f;
