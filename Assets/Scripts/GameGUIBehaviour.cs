@@ -32,18 +32,16 @@ public class GameGUIBehaviour : MonoBehaviour {
 			return;
 		}
 
-		if (player.score > _score) {
+		if (player.score >= _score) {
 
-			_score += Mathf.CeilToInt((player.score - _score)*.1f);
+			_score += Mathf.CeilToInt((player.score - _score) * .1f);
 			score.text = _score.ToString("000000000");
-
 		}
 
-		if (player.highscore  > _highscore) {
+		if (player.highscore  >= _highscore) {
 
-			_highscore += Mathf.CeilToInt((player.highscore - _highscore)*.1f);
+			_highscore += Mathf.CeilToInt((player.highscore - _highscore) * .1f);
 			highscore.text = _highscore.ToString("000000000");
-
 		}
 			
 	}

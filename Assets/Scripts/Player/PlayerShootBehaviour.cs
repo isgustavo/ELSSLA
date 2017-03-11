@@ -34,12 +34,7 @@ public class PlayerShootBehaviour : NetworkBehaviour {
 
 		var bullet = (GameObject)Instantiate(bulletPrefab, position, rotation);
 
-		//bullet.GetComponent<BulletBehaviour> ().playerId = gameObject.name;
-
-		//NetworkServer.SpawnWithClientAuthority (bullet, gameObject);
-
 		NetworkServer.Spawn(bullet);
-
 	}
 		
 }

@@ -27,14 +27,4 @@ public class PlayerPositionBehaviour : NetworkBehaviour {
 		}
 	}
 
-
-	public override void OnStartLocalPlayer ()
-	{
-		base.OnStartLocalPlayer ();
-
-		CameraFollowBehaviour camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<CameraFollowBehaviour> ();
-		camera.target = gameObject;
-
-	}
-
 }

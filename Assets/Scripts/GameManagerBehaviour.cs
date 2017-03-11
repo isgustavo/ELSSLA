@@ -6,6 +6,53 @@ using UnityEngine.Networking;
 
 public class GameManagerBehaviour : NetworkBehaviour {
 
+	public GameObject asteroidSpawnManager;
+	public PlayerBehaviour player;
+
+	public TextMesh score;
+	private int lastScore = -1;
+	public TextMesh highscore;
+	private int lastHighscore = -1;
+
+	public override void OnStartServer () {
+		base.OnStartServer ();
+
+
+		asteroidSpawnManager = Instantiate (asteroidSpawnManager);
+		NetworkServer.Spawn (asteroidSpawnManager);
+	}
+
+	void Update () {
+
+		if (player == null) {
+			return;
+		}
+
+		Debug.Log ("score" + player.score);
+
+		if (player.score > lastScore) {
+
+			lastScore += Mathf.CeilToInt((player.score - lastScore) * .1f);
+			score.text = lastScore.ToString("000000000");
+
+		}
+
+		Debug.Log ("highsore" + player.data.highscore);
+
+		if (player.data.highscore  > lastHighscore) {
+
+			lastHighscore += Mathf.CeilToInt((player.data.highscore - lastHighscore) * .1f);
+			highscore.text = lastHighscore.ToString("000000000");
+
+		}
+
+	}
+
+}
+
+
+/*
+
 	public GameObject m_asteroidSpawnManager;
 
 	public override void OnStartServer ()
@@ -119,4 +166,4 @@ public class GameManagerBehaviour : NetworkBehaviour {
 */
 
 		
-}
+
