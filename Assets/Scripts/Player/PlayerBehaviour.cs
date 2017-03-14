@@ -24,7 +24,9 @@ public class PlayerData {
 
 public class PlayerBehaviour : NetworkBehaviour {
 
+	[SyncVar]
 	public int score;
+	public bool isDead = false;
 	public PlayerData data { get; set; }
 
 	void Start () {
@@ -36,15 +38,25 @@ public class PlayerBehaviour : NetworkBehaviour {
 		Load ();
 		//Save (9876, false);
 	}
-		
+
 	public override void OnStartLocalPlayer () {
 		base.OnStartLocalPlayer ();
 
 		CameraFollowBehaviour camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<CameraFollowBehaviour> ();
 		camera.target = gameObject;
 
-		GameManagerBehaviour manage = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManagerBehaviour> ();
-		manage.player = this;
+		GUIManagerBehaviour manage = GameObject.FindGameObjectWithTag ("GameGUI").GetComponent<GUIManagerBehaviour> ();
+		manage.localPlayer = this;
+
+
+	}
+
+	public override void OnStartClient () {
+		base.OnStartClient ();
+
+		gameObject.transform.name = "Player"+gameObject.GetComponent<NetworkIdentity> ().netId.ToString ();
+		Debug.Log ("PlayerBehaviour name:" + gameObject.transform.name);
+		GameManagerBehaviour.instance.AddPlayer (gameObject.transform.name, this);
 
 	}
 
@@ -53,12 +65,17 @@ public class PlayerBehaviour : NetworkBehaviour {
 		if (!isLocalPlayer)
 			return;
 
-		GameObject hit = collision.gameObject;
-		if (hit.GetComponent<AsteroidBehaviour> () != null || hit.GetComponent<FragmentBehaviour> () != null) {
+		isDead = true;
 
-			score += 100;
-			Debug.Log ("OnCollision");
-		}
+		//GameObject hit = collision.gameObject;
+		//if (hit.GetComponent<AsteroidBehaviour> () != null || hit.GetComponent<FragmentBehaviour> () != null) {
+
+		//	score += 100;
+		//	Debug.Log ("OnCollision");
+		//}
+
+
+
 
 	}
 

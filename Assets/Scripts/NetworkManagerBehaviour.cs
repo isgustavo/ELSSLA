@@ -55,6 +55,8 @@ public class NetworkManagerBehaviour : NetworkManager {
 	}
 
 
+
+
 	//public void OnConnected(UnityEngine.Networking.NetworkMessage netMsg) {
 	//	Debug.Log ("OnConnected");
 	//	NetworkMessage message = new NetworkMessage();

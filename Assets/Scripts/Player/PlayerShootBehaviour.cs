@@ -12,6 +12,13 @@ public class PlayerShootBehaviour : NetworkBehaviour {
 	private float timeTilNextFire = 0.0f;
 
 
+	void Start () {
+
+		if (!isLocalPlayer) {
+			return;
+		}
+	}
+
 	void Update () {
 
 		if (!isLocalPlayer)
@@ -21,7 +28,7 @@ public class PlayerShootBehaviour : NetworkBehaviour {
 
 			if (timeTilNextFire < 0) {
 				timeTilNextFire = timeBetweenFires;
-				CmdShoot (bulletSpawn.position, bulletSpawn.rotation);
+				CmdShoot (bulletSpawn.position, bulletSpawn.rotation, gameObject.transform.name);
 			}
 		}
 		timeTilNextFire -= Time.deltaTime;
@@ -30,9 +37,11 @@ public class PlayerShootBehaviour : NetworkBehaviour {
 
 
 	[Command]
-	void CmdShoot (Vector3 position, Quaternion rotation) {
+	void CmdShoot (Vector3 position, Quaternion rotation, string playerId) {
 
+		//Debug.Log ("shoot:" + playerId);
 		var bullet = (GameObject)Instantiate(bulletPrefab, position, rotation);
+		bullet.GetComponent<BulletBehaviour> ().playerId = playerId;
 
 		NetworkServer.Spawn(bullet);
 	}

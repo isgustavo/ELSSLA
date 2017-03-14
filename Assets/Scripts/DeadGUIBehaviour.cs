@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DiedGUIBehaviour : MonoBehaviour {
-
+public class DeadGUIBehaviour : MonoBehaviour {
+	/*
 	public TextMesh score;
 	private int _score;
 	public TextMesh highscore;
@@ -64,6 +64,6 @@ public class DiedGUIBehaviour : MonoBehaviour {
 		}
 
 	}
-
+*/
 
 }

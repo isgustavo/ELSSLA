@@ -6,164 +6,35 @@ using UnityEngine.Networking;
 
 public class GameManagerBehaviour : NetworkBehaviour {
 
-	public GameObject asteroidSpawnManager;
-	public PlayerBehaviour player;
+	private const string PLAYER_ID_PREFIX = "Player";
 
-	public TextMesh score;
-	private int lastScore = -1;
-	public TextMesh highscore;
-	private int lastHighscore = -1;
+	public static GameManagerBehaviour instance;
+	[SerializeField]
+	private GameObject asteroidSpawnManager;
+	private Dictionary<string, PlayerBehaviour> players = new Dictionary<string, PlayerBehaviour> ();
+
+	void Awake () {
+		if (instance == null) {
+			instance = this;
+		} else if (instance != this) {
+			Destroy (gameObject);    
+		}
+	}
 
 	public override void OnStartServer () {
 		base.OnStartServer ();
 
-
-		asteroidSpawnManager = Instantiate (asteroidSpawnManager);
-		NetworkServer.Spawn (asteroidSpawnManager);
+		NetworkServer.Spawn (Instantiate (asteroidSpawnManager));
 	}
 
-	void Update () {
+	public void AddPlayer (string playerId, PlayerBehaviour player) {
+		players.Add (playerId, player);
 
-		if (player == null) {
-			return;
-		}
+	}
 
-		Debug.Log ("score" + player.score);
-
-		if (player.score > lastScore) {
-
-			lastScore += Mathf.CeilToInt((player.score - lastScore) * .1f);
-			score.text = lastScore.ToString("000000000");
-
-		}
-
-		Debug.Log ("highsore" + player.data.highscore);
-
-		if (player.data.highscore  > lastHighscore) {
-
-			lastHighscore += Mathf.CeilToInt((player.data.highscore - lastHighscore) * .1f);
-			highscore.text = lastHighscore.ToString("000000000");
-
-		}
+	public PlayerBehaviour GetPlayer (string playerId) {
+		return players [playerId];
 
 	}
 
 }
-
-
-/*
-
-	public GameObject m_asteroidSpawnManager;
-
-	public override void OnStartServer ()
-	{
-		base.OnStartServer ();
-		Debug.Log ("isLocalPlayer:" + isLocalPlayer);
-		Debug.Log ("isClient:" + isClient);
-		Debug.Log ("isServer:" + isServer);
-
-		m_asteroidSpawnManager = Instantiate (m_asteroidSpawnManager);
-		NetworkServer.Spawn (m_asteroidSpawnManager);
-
-	}
-
-
-
-
-
-
-
-	/*
-	public GameObject gameGUI;
-	public GameObject deadGUI;
-
-
-
-	public enum EGameState {
-			MainMenu,
-			Game,
-			Pause
-		}
-	
-
-	private static GameManagerBehaviour _instance = null; 
-	public static GameManagerBehaviour Instance {
-		get { return _instance; }
-	}
-
-	[SerializeField]
-	private NetworkManagerBehaviour networkManager;
-
-	private EGameState _gameState;
-	public EGameState GameState {
-		get {
-				return _gameState;
-			}
-
-		set {
-			_gameState = value;
-
-			switch (_gameState) {
-			case EGameState.MainMenu: 
-				mainMenu.SetActive (true);
-				gameMenu.SetActive (false);
-			break;
-			case EGameState.Game:
-				mainMenu.SetActive (false);
-				gameMenu.SetActive (true);
-			break;
-			}
-		}
-	}
-
-	public GameObject mainMenu;
-	public GameObject gameMenu;
-	public GameObject tapToPlay;
-	public GameObject tapToJoin;
-	public Transform testPrefab;
-
-	public bool isMovement;
-	public bool isShooting;
-
-	void Awake() {
-		if (_instance == null) {
-			_instance = this;
-		} else if (_instance != this) {
-			Destroy (gameObject);    
-		}
-		DontDestroyOnLoad(gameObject);
-	}
-
-
-	public override void OnNotify () {
-
-		tapToPlay.gameObject.SetActive(false);
-		tapToJoin.gameObject.SetActive(true);
-
-		//Debug.Log (networkManager.discovery.Server.ServerIp);
-
-	}
-
-	public void StartAsAHost () {
-		GameState = EGameState.Game;
-		networkManager.StartHost ();
-	}
-
-	public void StartAsAClient () {
-		GameState = EGameState.Game;
-		networkManager.StartClient ();
-	}
-		
-	public void MovementTrigger (bool value) {
-
-		isMovement = value;
-	}
-
-	public void ShootingTrigger (bool value) {
-
-		isShooting = value;
-	}
-*/
-
-		
-
