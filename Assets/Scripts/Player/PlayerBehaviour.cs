@@ -6,21 +6,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Networking;
 
-[Serializable] 
-public class PlayerData {
 
-	public int highscore;
-	public int deaths;
-	public int programmerDeaths;
-
-	public PlayerData () {
-
-		highscore = 0;
-		deaths = 0;
-		programmerDeaths = 0;
-	}
-
-}
 
 public class PlayerBehaviour : NetworkBehaviour {
 
