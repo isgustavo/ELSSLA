@@ -31,8 +31,21 @@ public class NetworkDiscoveryBehaviour : NetworkDiscovery {
 	public ObserverBehaviour observer;
 
 	void Start () {
-		Initialize();
-		StartAsClient();
+
+		if (Initialize ()) {
+
+			StartCoroutine("DoClientStart");
+		}
+
+	}
+
+	IEnumerator DoClientStart () {
+		for(;;) {
+			if (StartAsClient ()) {
+				StopCoroutine ("DoClientStart");
+			} 
+			yield return new WaitForSeconds(.1f);
+		}
 	}
 
 	public override void OnReceivedBroadcast (string fromAddress, string data) {

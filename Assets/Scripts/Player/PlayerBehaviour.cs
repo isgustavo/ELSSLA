@@ -10,13 +10,14 @@ using UnityEngine.Networking;
 
 public class PlayerBehaviour : NetworkBehaviour {
 
+	private  const float Z_FINAL_POSITION = -6f;
 	private const float POSITION_SPEED = 10f;
 	private const float ROTATE_AMOUNT = 2f;
 
 	[SyncVar]
 	public int score;
 	[SyncVar (hook="OnStatusChange")]
-	public bool isDead;
+	public bool isDead = false;
 	public bool isMoving { get; set; }
 	public bool isShooting { get; set; }
 	public PlayerData data { get; set; }
@@ -33,10 +34,7 @@ public class PlayerBehaviour : NetworkBehaviour {
 		cc = GetComponent<CapsuleCollider> ();
 		explosion = Instantiate (explosion);
 
-
-
 		score = 0;
-		isDead = false;
 
 		if (!isLocalPlayer) 
 			return;
@@ -51,11 +49,18 @@ public class PlayerBehaviour : NetworkBehaviour {
 		if (!isLocalPlayer || isDead)
 			return;
 
-		float tiltValue = GetTiltValue();
+		//float tiltValue = GetTiltValue();
 		Vector3 oldAngles = this.transform.eulerAngles;
 
 		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
 		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (1 * ROTATE_AMOUNT));
+
+
+		if (rb.position.z > Z_FINAL_POSITION) {
+			Vector3 newPosition = rb.position;
+			newPosition.z = Mathf.Lerp (rb.position.z, Z_FINAL_POSITION, Time.deltaTime * POSITION_SPEED/2);
+			transform.position = newPosition;
+		} 
 
 	}
 
@@ -93,8 +98,9 @@ public class PlayerBehaviour : NetworkBehaviour {
 			rb.velocity = new Vector3 (0, 0, 0);
 			transform.rotation = Quaternion.identity;
 		} else {
+			Debug.Log ("OnStatusChange");
 			score = 0;
-			rb.position = new Vector3 (0, 0, -6);
+			rb.position = new Vector3 (0, 0, 0);
 			rb.velocity = new Vector3 (0, 0, 0);
 			transform.rotation = Quaternion.identity;
 		}
