@@ -13,6 +13,8 @@ public class GameManagerBehaviour : NetworkBehaviour {
 	private GameObject asteroidSpawnManager;
 	private Dictionary<string, PlayerBehaviour> players = new Dictionary<string, PlayerBehaviour> ();
 
+	public GameObject prefab;
+
 	void Awake () {
 		if (instance == null) {
 			instance = this;
@@ -25,6 +27,15 @@ public class GameManagerBehaviour : NetworkBehaviour {
 		base.OnStartServer ();
 
 		NetworkServer.Spawn (Instantiate (asteroidSpawnManager));
+	}
+
+	public override void OnStartClient ()
+	{
+		base.OnStartClient ();
+
+		//GameObject obj = (GameObject)Instantiate (prefab);
+		//NetworkServer.AddPlayerForConnection (NetworkManagerBehaviour.instance.conn, obj, 0);
+
 	}
 
 	public void AddPlayer (string playerId, PlayerBehaviour player) {
