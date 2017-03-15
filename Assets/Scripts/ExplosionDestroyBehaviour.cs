@@ -4,10 +4,17 @@ using UnityEngine;
 
 public class ExplosionDestroyBehaviour : MonoBehaviour {
 
+	public List<ParticleSystem> particles = new List<ParticleSystem> ();
 
-	void Start () {
+	public void EmitParticules () {
 
-		Destroy(gameObject, gameObject.GetComponent<ParticleSystem>().duration); 
+		foreach (ParticleSystem particle in particles) {
+
+			particle.Emit (1);
+
+		}
+
+		//Destroy(gameObject, gameObject.GetComponent<ParticleSystem>().duration); 
 	}
 	
 

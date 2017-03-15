@@ -24,62 +24,152 @@ public class PlayerData {
 
 public class PlayerBehaviour : NetworkBehaviour {
 
+	private const float POSITION_SPEED = 10f;
+	private const float ROTATE_AMOUNT = 2f;
+
 	[SyncVar]
 	public int score;
-	public bool isDead = false;
+	[SyncVar (hook="OnStatusChange")]
+	public bool isDead;
+	public bool isMoving { get; set; }
+	public bool isShooting { get; set; }
 	public PlayerData data { get; set; }
 
+	private Rigidbody rb;
+	private CapsuleCollider cc;
+	[SerializeField]
+	private ParticleSystem explosion;
+
+	//MARK::
 	void Start () {
 
-		if (!isLocalPlayer) {
-			return;
-		}
+		rb = GetComponent<Rigidbody> ();
+		cc = GetComponent<CapsuleCollider> ();
+		explosion = Instantiate (explosion);
 
-		Load ();
-		//Save (9876, false);
+
+
+		score = 0;
+		isDead = false;
+
+		if (!isLocalPlayer) 
+			return;
+
+
+		//Load ();
+
 	}
 
+	void Update () {
+
+		if (!isLocalPlayer || isDead)
+			return;
+
+		float tiltValue = GetTiltValue();
+		Vector3 oldAngles = this.transform.eulerAngles;
+
+		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
+		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (1 * ROTATE_AMOUNT));
+
+	}
+
+	void FixedUpdate () {
+
+		if (!isLocalPlayer || isDead)
+			return;
+
+		if (isMoving) {
+
+			rb.AddForce (transform.up * POSITION_SPEED, ForceMode.Acceleration);
+		}
+	}
+
+	//MARK::
+	void OnCollisionEnter (Collision collision) {
+
+		if (!isLocalPlayer)
+			return;
+
+		CmdDestroy ();
+	}
+
+	//MARK::
+	public void OnStatusChange (bool value) {
+
+		isDead = value;
+		if (isDead) {
+			if (isLocalPlayer) {
+				Debug.Log ("Save");
+			}
+			explosion.transform.position = rb.position;
+			explosion.Play ();
+			rb.position = new Vector3 (rb.position.x, rb.position.y, -10);
+			rb.velocity = new Vector3 (0, 0, 0);
+			transform.rotation = Quaternion.identity;
+		} else {
+			score = 0;
+			rb.position = new Vector3 (0, 0, -6);
+			rb.velocity = new Vector3 (0, 0, 0);
+			transform.rotation = Quaternion.identity;
+		}
+	}
+
+	//MARK::
 	public override void OnStartLocalPlayer () {
 		base.OnStartLocalPlayer ();
 
 		CameraFollowBehaviour camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<CameraFollowBehaviour> ();
 		camera.target = gameObject;
 
-		GUIManagerBehaviour manage = GameObject.FindGameObjectWithTag ("GameGUI").GetComponent<GUIManagerBehaviour> ();
-		manage.localPlayer = this;
-
+		LocalGameBehaviour manage = GameObject.FindGameObjectWithTag ("GameGUI").GetComponent<LocalGameBehaviour> ();
+		manage.player = this;
 
 	}
 
 	public override void OnStartClient () {
 		base.OnStartClient ();
 
-		gameObject.transform.name = "Player"+gameObject.GetComponent<NetworkIdentity> ().netId.ToString ();
-		Debug.Log ("PlayerBehaviour name:" + gameObject.transform.name);
+		gameObject.transform.name = "Player" + gameObject.GetComponent<NetworkIdentity> ().netId.ToString ();
 		GameManagerBehaviour.instance.AddPlayer (gameObject.transform.name, this);
-
 	}
+		
 
-	void OnCollisionEnter(Collision collision) {
 
-		if (!isLocalPlayer)
-			return;
+	[Command]
+	void CmdDestroy () {
 
 		isDead = true;
-
-		//GameObject hit = collision.gameObject;
-		//if (hit.GetComponent<AsteroidBehaviour> () != null || hit.GetComponent<FragmentBehaviour> () != null) {
-
-		//	score += 100;
-		//	Debug.Log ("OnCollision");
-		//}
-
-
-
-
 	}
 
+	[Command]
+	public void CmdRespawn () {
 
+		isDead = false;
+	}
+		
+	float GetTiltValue () {
+		float TILT_MIN = 0.05f;
+		float TILT_MAX = 0.2f;
+
+		// Work out magnitude of tilt
+		float tilt = Mathf.Abs(Input.acceleration.x);
+
+		// If not really tilted don't change anything
+		if (tilt < TILT_MIN) {
+			return 0;
+		}
+		float tiltScale = (tilt - TILT_MIN) / (TILT_MAX - TILT_MIN);
+
+		// Change scale to be negative if accel was negative
+		if (Input.acceleration.x < 0) {
+			return -tiltScale;
+		} else {
+			return tiltScale;
+		}
+	}
+		
+
+	// MARK::
 	void Save (int points, bool programmerDeath) {
 
 		BinaryFormatter bf = new BinaryFormatter ();
@@ -98,7 +188,7 @@ public class PlayerBehaviour : NetworkBehaviour {
 			if (programmerDeath) {
 				data.programmerDeaths += 1;
 			}
-
+				
 			bf.Serialize (file, data);
 			file.Close (); 
 		} 
