@@ -6,41 +6,46 @@ using System;
 using UnityEngine;
 using UnityEngine.Networking;
 
-
-
 public class PlayerBehaviour : NetworkBehaviour {
 
-	private  const float Z_FINAL_POSITION = -6f;
+	private const string OBJECT_NAME_PREFIX = "PLAYER";
+	private const int INITIAL_SCORE = 0;
+	private const float Z_FINAL_POSITION = -6f;
+	private const float Z_DEAD_POSITION = -10f;
 	private const float POSITION_SPEED = 10f;
+	private const float TILT_MIN = .05f;
+	private const float TILT_MAX = .2f;
 	private const float ROTATE_AMOUNT = 2f;
+	private const float TIME_BETWEEN_SHOT = .3f;
 
-	[SyncVar]
-	public int score;
+	[SyncVar (hook="OnScoreChange")]
+	public int score = INITIAL_SCORE;
+	public int highscore;
 	[SyncVar (hook="OnStatusChange")]
 	public bool isDead = false;
 	public bool isMoving { get; set; }
 	public bool isShooting { get; set; }
-	public PlayerData data { get; set; }
 
 	private Rigidbody rb;
 	private CapsuleCollider cc;
+	private float timeTilNextShot = .0f;
+
+	[SerializeField]
+	private GameObject bulletPrefab;
+	[SerializeField]
+	private Transform bulletSpawn;
 	[SerializeField]
 	private ParticleSystem explosion;
+
+
 
 	//MARK::
 	void Start () {
 
 		rb = GetComponent<Rigidbody> ();
 		cc = GetComponent<CapsuleCollider> ();
+		highscore = LocalPlayerBehaviour.instance.GetHighscore ();
 		explosion = Instantiate (explosion);
-
-		score = 0;
-
-		if (!isLocalPlayer) 
-			return;
-
-
-		//Load ();
 
 	}
 
@@ -48,19 +53,29 @@ public class PlayerBehaviour : NetworkBehaviour {
 
 		if (!isLocalPlayer || isDead)
 			return;
-
-		//float tiltValue = GetTiltValue();
-		Vector3 oldAngles = this.transform.eulerAngles;
-
-		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
-		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (1 * ROTATE_AMOUNT));
-
-
+		
 		if (rb.position.z > Z_FINAL_POSITION) {
 			Vector3 newPosition = rb.position;
-			newPosition.z = Mathf.Lerp (rb.position.z, Z_FINAL_POSITION, Time.deltaTime * POSITION_SPEED/2);
+			newPosition.z = Mathf.Lerp (rb.position.z, Z_FINAL_POSITION, Time.deltaTime * POSITION_SPEED);
 			transform.position = newPosition;
 		} 
+
+		//Rotation
+		float tiltValue = GetTiltValue();
+		Vector3 oldAngles = this.transform.eulerAngles;
+
+		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (2 * ROTATE_AMOUNT));
+		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
+
+
+		if (isShooting) {
+
+			if (timeTilNextShot < 0) {
+				timeTilNextShot = TIME_BETWEEN_SHOT;
+				CmdShoot (bulletSpawn.position, bulletSpawn.rotation, gameObject.transform.name);
+			}
+		}
+		timeTilNextShot -= Time.deltaTime;
 
 	}
 
@@ -75,58 +90,67 @@ public class PlayerBehaviour : NetworkBehaviour {
 		}
 	}
 
-	//MARK::
-	void OnCollisionEnter (Collision collision) {
-
-		if (!isLocalPlayer)
-			return;
-
-		CmdDestroy ();
-	}
-
-	//MARK::
-	public void OnStatusChange (bool value) {
-
-		isDead = value;
-		if (isDead) {
-			if (isLocalPlayer) {
-				Debug.Log ("Save");
-			}
-			explosion.transform.position = rb.position;
-			explosion.Play ();
-			rb.position = new Vector3 (rb.position.x, rb.position.y, -10);
-			rb.velocity = new Vector3 (0, 0, 0);
-			transform.rotation = Quaternion.identity;
-		} else {
-			Debug.Log ("OnStatusChange");
-			score = 0;
-			rb.position = new Vector3 (0, 0, 0);
-			rb.velocity = new Vector3 (0, 0, 0);
-			transform.rotation = Quaternion.identity;
-		}
-	}
-
-	//MARK::
+	//MARK:: Network Behaviour methods
 	public override void OnStartLocalPlayer () {
 		base.OnStartLocalPlayer ();
 
 		CameraFollowBehaviour camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<CameraFollowBehaviour> ();
 		camera.target = gameObject;
 
-		LocalGameBehaviour manage = GameObject.FindGameObjectWithTag ("GameGUI").GetComponent<LocalGameBehaviour> ();
-		manage.player = this;
+		LocalGUIGameBehaviour game = GameObject.FindGameObjectWithTag ("GameGUI").GetComponent<LocalGUIGameBehaviour> ();
+		game.player = this;
 
 	}
 
 	public override void OnStartClient () {
 		base.OnStartClient ();
 
-		gameObject.transform.name = "Player" + gameObject.GetComponent<NetworkIdentity> ().netId.ToString ();
+		gameObject.transform.name = "PLAYER" + gameObject.GetComponent<NetworkIdentity> ().netId.ToString ();
 		GameManagerBehaviour.instance.AddPlayer (gameObject.transform.name, this);
 	}
+
+	//MARK:: Hook methods
+	public void OnStatusChange (bool value) {
+
+		isDead = value;
+		if (isDead) {
+			if (isLocalPlayer) {
+				LocalPlayerBehaviour.instance.SaveLocalPlayerIndo (score);
+			}
+
+			explosion.transform.position = rb.position;
+			explosion.Play ();
+
+			rb.position = new Vector3 (rb.position.x, rb.position.y, Z_DEAD_POSITION);
+			rb.velocity = Vector3.zero;
+			transform.rotation = Quaternion.identity;
+
+		} else {
+			
+			score = INITIAL_SCORE;
+			rb.position = new Vector3 (0, 0, 0);
+			cc.enabled = true;
+		}
+	}
+
+	public void OnScoreChange (int value) {
 		
+		if (value > highscore) {
+			highscore = value;
+		}
+	}
 
+	//MARK:: Collision methods
+	void OnCollisionEnter (Collision collision) {
 
+		if (!isLocalPlayer)
+			return;
+		
+		cc.enabled = false;
+		CmdDestroy ();
+	}
+		
+	//MARK:: Command methods
 	[Command]
 	void CmdDestroy () {
 
@@ -138,10 +162,19 @@ public class PlayerBehaviour : NetworkBehaviour {
 
 		isDead = false;
 	}
+
+	[Command]
+	void CmdShoot (Vector3 position, Quaternion rotation, string playerId) {
+
+		var bullet = (GameObject)Instantiate(bulletPrefab, position, rotation);
+		bullet.GetComponent<BulletBehaviour> ().playerId = playerId;
+
+		NetworkServer.Spawn(bullet);
+	}
+
+	//MARK:: Others methods
 		
 	float GetTiltValue () {
-		float TILT_MIN = 0.05f;
-		float TILT_MAX = 0.2f;
 
 		// Work out magnitude of tilt
 		float tilt = Mathf.Abs(Input.acceleration.x);
@@ -159,50 +192,6 @@ public class PlayerBehaviour : NetworkBehaviour {
 			return tiltScale;
 		}
 	}
-		
-
-	// MARK::
-	void Save (int points, bool programmerDeath) {
-
-		BinaryFormatter bf = new BinaryFormatter ();
-		FileStream file;
-		if (File.Exists (Application.persistentDataPath + "/PlayerInfo.dat")) {
-			
-			file = new FileStream (Application.persistentDataPath + "/PlayerInfo.dat", FileMode.Open);
-			data = (PlayerData) bf.Deserialize (file);
-
-			if (points > data.highscore) {
-				data.highscore = points;
-			}
-
-			data.deaths += 1;
-
-			if (programmerDeath) {
-				data.programmerDeaths += 1;
-			}
-				
-			bf.Serialize (file, data);
-			file.Close (); 
-		} 
-
-	}
-
-	void Load () {
-
-		BinaryFormatter bf = new BinaryFormatter ();
-		FileStream file;
-		if (File.Exists (Application.persistentDataPath + "/PlayerInfo.dat")) {
-
-			file = new FileStream (Application.persistentDataPath + "/PlayerInfo.dat", FileMode.Open);
-			data = (PlayerData) bf.Deserialize (file);
-			file.Close ();
-		} else {
-
-			file = File.Create (Application.persistentDataPath + "/PlayerInfo.dat");
-			data = new PlayerData ();
-		}
-	}
-
 }
 
 

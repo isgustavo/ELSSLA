@@ -52,6 +52,7 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 
 			file = new FileStream (Application.persistentDataPath + "/PlayerInfo.dat", FileMode.Open);
 			player = (PlayerData) bf.Deserialize (file);
+			Debug.Log ("load" + player.highscore);
 			file.Close ();
 		} else {
 
@@ -61,22 +62,21 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 
 	}
 
-	void SaveLocalPlayerIndo () {
+	public void SaveLocalPlayerIndo (int score) {
 
 		BinaryFormatter bf = new BinaryFormatter ();
 		FileStream file;
 		if (File.Exists (Application.persistentDataPath + "/PlayerInfo.dat")) {
 
 			file = new FileStream (Application.persistentDataPath + "/PlayerInfo.dat", FileMode.Open);
-			player = (PlayerData) bf.Deserialize (file);
 
-			//
-
+			if (score > player.highscore) {
+				player.highscore = score;
+			}
 
 			bf.Serialize (file, player);
 			file.Close (); 
 		} 
-
 
 	}
 
@@ -84,6 +84,10 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 	public string GetShipName () {
 		return "NormalPlayer";
 		//return player.shipName;
+	}
+
+	public int GetHighscore () {
+		return player.highscore;
 	}
 
 
