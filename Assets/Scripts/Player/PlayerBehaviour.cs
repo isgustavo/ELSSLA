@@ -6,9 +6,10 @@ using System;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class PlayerBehaviour : NetworkBehaviour {
+public class PlayerBehaviour : NetworkBehaviour, Destructible {
 
 	private const string OBJECT_NAME_PREFIX = "PLAYER";
+	private const int POINTS = 300;
 	private const int INITIAL_SCORE = 0;
 	private const float Z_FINAL_POSITION = -6f;
 	private const float Z_DEAD_POSITION = -10f;
@@ -145,8 +146,17 @@ public class PlayerBehaviour : NetworkBehaviour {
 
 		if (!isLocalPlayer)
 			return;
-		
+
 		cc.enabled = false;
+
+		GameObject hit = collision.gameObject;
+		BulletBehaviour obj = hit.GetComponent<BulletBehaviour> ();
+
+		if (obj != null) {
+			Debug.Log (obj.playerId + "Kill you");
+		}
+
+
 		CmdDestroy ();
 	}
 		
@@ -171,6 +181,13 @@ public class PlayerBehaviour : NetworkBehaviour {
 
 		NetworkServer.Spawn(bullet);
 	}
+
+	//MARK:: Destructible interface method
+	public int GetPoints () {
+		
+		return POINTS;
+	}
+
 
 	//MARK:: Others methods
 		

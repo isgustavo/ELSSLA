@@ -27,14 +27,14 @@ public class BulletBehaviour : NetworkBehaviour {
 
 		gameObject.GetComponent<BoxCollider> ().enabled = false;
 
-
 		GameObject hit = collision.gameObject;
-		AsteroidBehaviour asteroid = hit.GetComponent<AsteroidBehaviour> ();
-		if (asteroid != null) {
+		Destructible obj = hit.GetComponent<Destructible> ();
+		if (obj != null) {
 
 			PlayerBehaviour player = GameManagerBehaviour.instance.GetPlayer (playerId);
-			player.score += 100;
+			player.score += obj.GetPoints ();
 		}
+
 
 		Destroy (gameObject);
 	}

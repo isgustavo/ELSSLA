@@ -3,7 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class AsteroidBehaviour : NetworkBehaviour {
+public interface Destructible {
+
+	int GetPoints ();
+}
+
+public class AsteroidBehaviour : NetworkBehaviour, Destructible {
+
+	private const int POINTS = 100;
 
 	public bool inUse = true;
 	private Vector3 noUsePosition = new Vector3(0, 0, -20);
@@ -66,6 +73,10 @@ public class AsteroidBehaviour : NetworkBehaviour {
 		}
 	}
 
+	public int GetPoints () {
+
+		return POINTS;
+	}
 
 		
 }

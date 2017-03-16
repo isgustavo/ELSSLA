@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class FragmentBehaviour : MonoBehaviour {
+public class FragmentBehaviour : MonoBehaviour, Destructible {
+
+	private const int POINTS = 50;
 
 	public bool inUse = false;
 	public int velocityDirection;
@@ -67,4 +69,10 @@ public class FragmentBehaviour : MonoBehaviour {
 				_collider.enabled = true;
 		}
 	}
+
+	public int GetPoints () {
+
+		return POINTS;
+	}
+
 }

@@ -52,7 +52,7 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 
 			file = new FileStream (Application.persistentDataPath + "/PlayerInfo.dat", FileMode.Open);
 			player = (PlayerData) bf.Deserialize (file);
-			Debug.Log ("load" + player.highscore);
+
 			file.Close ();
 		} else {
 
