@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using UnityEngine;
 using System;
 using System.Runtime.Serialization.Formatters.Binary; 
@@ -30,16 +31,16 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 	private PlayerData player;
 
 	void Awake () {
-		
+
 		if (instance == null) {
 			
 			instance = this;
+			Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
 		} else if (instance != this) {
 
 			Destroy (gameObject);
 		}
-
-		//DontDestroyOnLoad (gameObject);
+			
 		LoadLocalPlayerInfo ();
 
 	}
@@ -49,15 +50,16 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 		BinaryFormatter bf = new BinaryFormatter ();
 		FileStream file;
 		if (File.Exists (Application.persistentDataPath + "/PlayerInfo.dat")) {
-
-			file = new FileStream (Application.persistentDataPath + "/PlayerInfo.dat", FileMode.Open);
+			file = File.Open (Application.persistentDataPath + "/PlayerInfo.dat", FileMode.Open);
 			player = (PlayerData) bf.Deserialize (file);
 
 			file.Close ();
 		} else {
-
 			file = File.Create (Application.persistentDataPath + "/PlayerInfo.dat");
+
 			player = new PlayerData ();
+			bf.Serialize (file, player);
+			file.Close (); 
 		}
 
 	}
@@ -68,7 +70,7 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 		FileStream file;
 		if (File.Exists (Application.persistentDataPath + "/PlayerInfo.dat")) {
 
-			file = new FileStream (Application.persistentDataPath + "/PlayerInfo.dat", FileMode.Open);
+			file = File.Open (Application.persistentDataPath + "/PlayerInfo.dat", FileMode.Open);
 
 			if (score > player.highscore) {
 				player.highscore = score;

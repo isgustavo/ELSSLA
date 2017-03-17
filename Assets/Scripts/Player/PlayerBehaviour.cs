@@ -36,8 +36,11 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 	[SerializeField]
 	private Transform bulletSpawn;
 	[SerializeField]
+	private Transform explosionSpawn;
+	[SerializeField]
 	private ParticleSystem explosion;
-
+	[SerializeField]
+	private ParticleSystem force;
 
 
 	//MARK::
@@ -47,7 +50,7 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 		cc = GetComponent<CapsuleCollider> ();
 		highscore = LocalPlayerBehaviour.instance.GetHighscore ();
 		explosion = Instantiate (explosion);
-
+		force = Instantiate (force);
 	}
 
 	void Update () {
@@ -65,8 +68,8 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 		float tiltValue = GetTiltValue();
 		Vector3 oldAngles = this.transform.eulerAngles;
 
-		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (2 * ROTATE_AMOUNT));
-		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
+		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (2 * ROTATE_AMOUNT));
+		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
 
 
 		if (isShooting) {
@@ -79,7 +82,7 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 		timeTilNextShot -= Time.deltaTime;
 
 	}
-
+	bool test = true;
 	void FixedUpdate () {
 
 		if (!isLocalPlayer || isDead)
@@ -87,7 +90,15 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 
 		if (isMoving) {
 
+			if (test) {
+				force.transform.position = explosionSpawn.position;
+				force.Play ();
+				test = false;
+			}
+
 			rb.AddForce (transform.up * POSITION_SPEED, ForceMode.Acceleration);
+		} else {
+			test = true;
 		}
 	}
 
@@ -125,6 +136,8 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 			rb.position = new Vector3 (rb.position.x, rb.position.y, Z_DEAD_POSITION);
 			rb.velocity = Vector3.zero;
 			transform.rotation = Quaternion.identity;
+			isMoving = false;
+			isShooting = false;
 
 		} else {
 			
