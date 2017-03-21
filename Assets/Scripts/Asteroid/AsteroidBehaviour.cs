@@ -40,7 +40,11 @@ public class AsteroidBehaviour : NetworkBehaviour, Destructible {
 		if (!isServer || !inUse)
 			return;
 
-		GameUtil.VerifyZPosition (rb);
+		GameUtil.AjustZPosition (rb);
+
+		if (!GameUtil.VerifyInsideWorld (rb.position)) {
+			OnChangeUse (false);
+		}
 	}
 
 

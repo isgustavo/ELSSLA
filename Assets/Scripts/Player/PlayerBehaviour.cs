@@ -15,6 +15,7 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 	private const float TILT_MAX = .2f;
 	private const float ROTATE_AMOUNT = 2f;
 	private const float TIME_BETWEEN_SHOT = .3f;
+	private const float TIME_INSIDE_OUT_TOLERANCE = 5f;
 
 	[SyncVar (hook="OnScoreChange")]
 	public int score = INITIAL_SCORE;
@@ -27,6 +28,7 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 	private Rigidbody rb;
 	private CapsuleCollider cc;
 	private float timeTilNextShot = .0f;
+	private float timeInsideOut = TIME_INSIDE_OUT_TOLERANCE;
 
 	[SerializeField]
 	private GameObject bulletPrefab;
@@ -59,7 +61,7 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 		if (!isLocalPlayer || isDead)
 			return;
 		
-		GameUtil.VerifyZPosition (rb);
+		GameUtil.AjustZPosition (rb);
 
 		Vector3 oldAngles = this.transform.eulerAngles;
 		#if UNITY_EDITOR
@@ -102,6 +104,19 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 		} else {
 			forceExplosionUsed = false;
 		}
+
+		if (!GameUtil.VerifyInsideWorld (rb.position)) {
+
+			if (timeInsideOut < 0) {
+				isDead = true;
+			}
+			timeInsideOut -= Time.deltaTime;
+			//TODO: display time 
+		} else {
+			
+			timeInsideOut = TIME_INSIDE_OUT_TOLERANCE;
+		}
+
 	}
 
 	//MARK:: Network Behaviour methods

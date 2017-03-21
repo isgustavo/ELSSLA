@@ -35,6 +35,7 @@ public class BulletBehaviour : NetworkBehaviour {
 			
 			rb.rotation = Quaternion.Lerp(rb.rotation, rotTarget, Time.deltaTime * SPREED_VELOCITY);
 		}
+
 	}
 
 	void OnCollisionEnter(Collision collision) { 
