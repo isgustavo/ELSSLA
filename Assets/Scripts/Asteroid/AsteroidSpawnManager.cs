@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public delegate void PushDelegate (GameObject asteroid);
+public delegate void PushDelegate (AsteroidBehaviour asteroid);
 
 public class AsteroidSpawnManager : NetworkBehaviour {
 
-	private int asteroidPoolSize = 12;
+	private const int ASTEROID_POOL_SIZE = 10;
 
 	public GameObject asteroidPrefab;
-	private List<GameObject> asteroidPool = new List<GameObject> ();
+	private List<AsteroidBehaviour> asteroidPool = new List<AsteroidBehaviour> ();
 
 	private FragmentSpawnManager fragmentSpawnManager;
 
@@ -18,17 +18,17 @@ public class AsteroidSpawnManager : NetworkBehaviour {
 
 		fragmentSpawnManager = GetComponent<FragmentSpawnManager> ();
 
-		for (int i = 0; i < asteroidPoolSize; i++) {
+		for (int i = 0; i < ASTEROID_POOL_SIZE; i++) {
 
-			GameObject obj = (GameObject)Instantiate(asteroidPrefab);
-			obj.transform.name = "Asteroid" + i;
-			obj.GetComponent<AsteroidBehaviour> ().pushDelegate += new PushDelegate (this.Push);
+			GameObject asteroid = (GameObject)Instantiate (asteroidPrefab);
+			asteroid.transform.name = "Asteroid" + i;
+			asteroid.GetComponent<AsteroidBehaviour> ().pushDelegate += new PushDelegate (this.Push);
 
-			NetworkServer.Spawn (obj);
+			NetworkServer.Spawn (asteroid);
 		}
 	}
 
-	void Push(GameObject asteroid) {
+	public void Push (AsteroidBehaviour asteroid) {
 
 		if (asteroidPool != null) {
 			asteroidPool.Add (asteroid);
@@ -36,25 +36,24 @@ public class AsteroidSpawnManager : NetworkBehaviour {
 		}
 	}
 
-	GameObject Pop () {
+	public AsteroidBehaviour Pop () {
 		
 		if (asteroidPool.Count > 0) {
 
-			GameObject obj = asteroidPool [0];
+			AsteroidBehaviour asteroid = asteroidPool [0];
 			asteroidPool.RemoveAt (0);
-			return obj;
+			return asteroid;
 		}
 
 		return null;
 	}
 
-	public void SetAsteroidToUse() {
-
-		GameObject asteroid = Pop ();
+	public void SetAsteroidToUse () {
+		
+		AsteroidBehaviour asteroid = Pop ();
 		if (asteroid != null) {
-
-			AsteroidBehaviour asteroidBehaviour = asteroid.GetComponent<AsteroidBehaviour> ();
-			asteroidBehaviour.OnChangeUse (true);
+			
+			asteroid.OnChangeUse (true);
 		}
 	}
 

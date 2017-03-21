@@ -31,9 +31,9 @@ public class NetworkDiscoveryBehaviour : NetworkDiscovery {
 	public ObserverBehaviour observer;
 
 	void Start () {
-
+		Debug.Log ("Start");
 		if (Initialize ()) {
-
+			Debug.Log ("Initialize");
 			StartCoroutine("DoClientStart");
 		}
 
@@ -42,6 +42,7 @@ public class NetworkDiscoveryBehaviour : NetworkDiscovery {
 	IEnumerator DoClientStart () {
 		for(;;) {
 			if (StartAsClient ()) {
+				Debug.Log ("if startAsClient");
 				StopCoroutine ("DoClientStart");
 			} 
 			yield return new WaitForSeconds(.1f);

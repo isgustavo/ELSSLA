@@ -13,28 +13,34 @@ public class AsteroidBehaviour : NetworkBehaviour, Destructible {
 	private const int POINTS = 100;
 
 	public bool inUse = true;
-	private Vector3 noUsePosition = new Vector3(0, 0, -20);
+	private Rigidbody rb;
+	private SphereCollider cc;
 
 	public event PushDelegate pushDelegate;
 
-	private Rigidbody _rigidbory;
-	private SphereCollider _collider;
+	[SerializeField]
+	private ParticleSystem explosion;
 
-	void Awake () {
-
-		transform.position = AsteroidUtils.GetRandomPosition ();
-		transform.rotation = Random.rotation;
-
-	}
 
 	void Start () {
 
 		if (!isServer)
 			return;
 		
-		_rigidbory = gameObject.GetComponent<Rigidbody> ();
-		_rigidbory.velocity = AsteroidUtils.GetRandomVelocity ();
-		_collider = gameObject.GetComponent<SphereCollider> ();
+		rb = gameObject.GetComponent<Rigidbody> ();
+		rb.position = GameUtil.GetRandomPosition ();
+		rb.rotation = Random.rotation;
+		rb.velocity = GameUtil.GetRandomVelocity ();
+
+		cc = gameObject.GetComponent<SphereCollider> ();
+	}
+
+	void Update () {
+		
+		if (!isServer || !inUse)
+			return;
+
+		GameUtil.VerifyZPosition (rb);
 	}
 
 
@@ -45,7 +51,9 @@ public class AsteroidBehaviour : NetworkBehaviour, Destructible {
 
 		GameObject hit = collision.gameObject;
 		if (hit.GetComponent<BulletBehaviour> () != null) {
-			_collider.enabled = false;
+			cc.enabled = false;
+
+			RpcAsteroidExplosion (rb.position, rb.rotation);
 
 			OnChangeUse (false);
 		}
@@ -59,23 +67,28 @@ public class AsteroidBehaviour : NetworkBehaviour, Destructible {
 		
 		inUse = value; 
 
-		if (inUse == false) {
-			pushDelegate (gameObject);
-			transform.position = noUsePosition;
-			_rigidbory.velocity = Vector3.zero;
+		if (inUse) {
 
-
+			rb.position = GameUtil.GetRandomPosition ();
+			rb.velocity = GameUtil.GetRandomVelocity ();
+			cc.enabled = true;
 		} else {
 
-			transform.position = AsteroidUtils.GetRandomPosition ();
-			_rigidbory.velocity = AsteroidUtils.GetRandomVelocity ();
-			_collider.enabled = true;
+			pushDelegate (this);
+			rb.position = GameUtil.NO_USE_POSITION;
+			rb.velocity = Vector3.zero;
 		}
 	}
 
 	public int GetPoints () {
 
 		return POINTS;
+	}
+
+	[ClientRpc]
+	void RpcAsteroidExplosion (Vector3 position, Quaternion rotation) {
+
+		Instantiate (explosion, position, rotation).Play();
 	}
 
 		

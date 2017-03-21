@@ -11,9 +11,6 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 	private const string OBJECT_NAME_PREFIX = "PLAYER";
 	private const int POINTS = 300;
 	private const int INITIAL_SCORE = 0;
-	private const float Z_FINAL_POSITION = -6f;
-	private const float Z_DEAD_POSITION = -10f;
-	private const float POSITION_SPEED = 10f;
 	private const float TILT_MIN = .05f;
 	private const float TILT_MAX = .2f;
 	private const float ROTATE_AMOUNT = 2f;
@@ -41,14 +38,18 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 	private ParticleSystem explosion;
 	[SerializeField]
 	private ParticleSystem force;
+	private bool forceExplosionUsed = false;
 
 
 	//MARK::
 	void Start () {
 
-		rb = GetComponent<Rigidbody> ();
-		cc = GetComponent<CapsuleCollider> ();
 		highscore = LocalPlayerBehaviour.instance.GetHighscore ();
+
+		rb = GetComponent<Rigidbody> ();
+		rb.position = new Vector3 (0, 0, 10);
+		cc = GetComponent<CapsuleCollider> ();
+
 		explosion = Instantiate (explosion);
 		force = Instantiate (force);
 	}
@@ -58,18 +59,19 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 		if (!isLocalPlayer || isDead)
 			return;
 		
-		if (rb.position.z > Z_FINAL_POSITION) {
-			Vector3 newPosition = rb.position;
-			newPosition.z = Mathf.Lerp (rb.position.z, Z_FINAL_POSITION, Time.deltaTime * POSITION_SPEED);
-			transform.position = newPosition;
-		} 
+		GameUtil.VerifyZPosition (rb);
 
-		//Rotation
-		float tiltValue = GetTiltValue();
 		Vector3 oldAngles = this.transform.eulerAngles;
-
-		//this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (2 * ROTATE_AMOUNT));
-		this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
+		#if UNITY_EDITOR
+			if (Input.GetKey(KeyCode.LeftArrow)) {
+				this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (2 * ROTATE_AMOUNT));
+			} else if (Input.GetKey(KeyCode.RightArrow)) {
+				this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (-2 * ROTATE_AMOUNT));
+			}
+		#else 
+			float tiltValue = GetTiltValue();
+			this.transform.eulerAngles = new Vector3(oldAngles.x, oldAngles.y, oldAngles.z + (tiltValue * ROTATE_AMOUNT));
+		#endif
 
 
 		if (isShooting) {
@@ -82,7 +84,7 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 		timeTilNextShot -= Time.deltaTime;
 
 	}
-	bool test = true;
+
 	void FixedUpdate () {
 
 		if (!isLocalPlayer || isDead)
@@ -90,15 +92,15 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 
 		if (isMoving) {
 
-			if (test) {
+			if (!forceExplosionUsed) {
 				force.transform.position = explosionSpawn.position;
 				force.Play ();
-				test = false;
+				forceExplosionUsed = true;
 			}
 
-			rb.AddForce (transform.up * POSITION_SPEED, ForceMode.Acceleration);
+			rb.AddForce (transform.up * GameUtil.POSITION_SPEED, ForceMode.Acceleration);
 		} else {
-			test = true;
+			forceExplosionUsed = false;
 		}
 	}
 
@@ -133,7 +135,7 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 			explosion.transform.position = rb.position;
 			explosion.Play ();
 
-			rb.position = new Vector3 (rb.position.x, rb.position.y, Z_DEAD_POSITION);
+			rb.position = new Vector3 (rb.position.x, rb.position.y, GameUtil.Z_DEAD_POSITION);
 			rb.velocity = Vector3.zero;
 			transform.rotation = Quaternion.identity;
 			isMoving = false;
@@ -149,6 +151,7 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 
 	public void OnScoreChange (int value) {
 		
+		score = value;
 		if (value > highscore) {
 			highscore = value;
 		}
@@ -166,7 +169,7 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 		BulletBehaviour obj = hit.GetComponent<BulletBehaviour> ();
 
 		if (obj != null) {
-			Debug.Log (obj.playerId + "Kill you");
+			//TODO: obj.playerId KILL YOU
 		}
 
 

@@ -35,12 +35,14 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 		if (instance == null) {
 			
 			instance = this;
+			// Forces a different code path in the BinaryFormatter that doesn't rely on run-time code generation (which would break on iOS).
+			// http://answers.unity3d.com/questions/30930/why-did-my-binaryserialzer-stop-working.html
 			Environment.SetEnvironmentVariable("MONO_REFLECTION_SERIALIZER", "yes");
 		} else if (instance != this) {
 
 			Destroy (gameObject);
 		}
-			
+
 		LoadLocalPlayerInfo ();
 
 	}

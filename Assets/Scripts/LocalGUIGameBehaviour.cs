@@ -43,7 +43,12 @@ public class LocalGUIGameBehaviour : MonoBehaviour {
 		if (player.isDead) {
 
 			gameCanvas.SetActive (false);
+			//MoveTrigger (false);
+			//ShootTrigger (false);
 			deadCanvas.SetActive (true);
+
+			lastScore = INITIAL_SCORE;
+			lastHighscore = INITIAL_HIGHSCORE;
 
 			UpdateDead ();
 

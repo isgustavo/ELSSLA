@@ -3,70 +3,86 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class FragmentBehaviour : MonoBehaviour, Destructible {
+public class FragmentBehaviour : NetworkBehaviour, Destructible {
 
 	private const int POINTS = 50;
 
 	public bool inUse = false;
 	public int velocityDirection;
 
-	private Vector3 noUsePosition = new Vector3(0, 0, -20);
 	public Vector3 startPosition;
 	public Vector3 startRotation;
 
-	public NetworkIdentity identity;
+	public event PushFragmentDelegate pushDelegate;
 
-	private Rigidbody _rigidbory;
-	private BoxCollider _collider;
+	private Rigidbody rb;
+	private BoxCollider cc;
+
+	[SerializeField]
+	private ParticleSystem explosion;
 
 	void Start () {
 
-		if (!identity.isServer)
+		if (!isServer)
+			return;
+
+		rb = GetComponent<Rigidbody> ();
+		rb.position = GameUtil.NO_USE_POSITION;
+		cc = GetComponent<BoxCollider> ();
+		cc.enabled = false;
+	}
+
+	void Update () {
+		
+		if (!isServer || !inUse)
 			return;
 		
-		_rigidbory = GetComponent<Rigidbody> ();
-		_collider = GetComponent<BoxCollider> ();
+		GameUtil.VerifyZPosition (rb);
 	}
 
 	void OnCollisionEnter(Collision collision) {
 
-		if (!identity.isServer)
+		if (!isServer)
 			return;
 
 		GameObject hit = collision.gameObject;
 		if (hit.GetComponent<BulletBehaviour> () != null) {
-			_collider.enabled = false;
+			cc.enabled = false;
 
-			OnChangeUse (false);
+			RpcFragmentExplosion (rb.position, rb.rotation);
+
+			OnChangeUse (false, GameUtil.NO_USE_POSITION, Quaternion.identity);
 		}
 
 	}
 
 
-	public void OnChangeUse (bool value) {
+	public void OnChangeUse (bool value, Vector3 position, Quaternion rotation) {
 
-		if (!identity.isServer)
+		if (!isServer)
 			return;
 		
 		inUse = value; 
 
-		if (inUse == false) {
-			
-			transform.position = noUsePosition;
-			_rigidbory.velocity = Vector3.zero;
+		if (inUse) {
+
+			rb.position = startPosition + position;
+			rb.rotation.SetLookRotation(startRotation);
+
+			if (velocityDirection == 1) {
+				rb.velocity = Vector3.right;
+			} else if (velocityDirection == 0) {
+				rb.velocity = Vector3.up;
+			} else {
+				rb.velocity = Vector3.left;
+			}
+
+			cc.enabled = true;
 
 		} else { 
 			
-			transform.localPosition = startPosition;
-			transform.localRotation.SetLookRotation(startRotation);
-			if (velocityDirection == 1) {
-				_rigidbory.velocity = Vector3.right;
-			} else if (velocityDirection == 0) {
-				_rigidbory.velocity = Vector3.up;
-			} else {
-				_rigidbory.velocity = Vector3.left;
-			}
-				_collider.enabled = true;
+			rb.position = position;
+			rb.velocity = Vector3.zero;
 		}
 	}
 
@@ -75,4 +91,9 @@ public class FragmentBehaviour : MonoBehaviour, Destructible {
 		return POINTS;
 	}
 
+	[ClientRpc]
+	void RpcFragmentExplosion (Vector3 position, Quaternion rotation) {
+
+		Instantiate (explosion, position, rotation).Play();
+	}
 }
