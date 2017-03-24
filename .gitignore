@@ -3,6 +3,7 @@
 /[Oo]bj/
 /[Bb]uild/
 /[Bb]uilds/
+/unity_ios/
 /Assets/AssetStoreTools*
 /Assets/Space Shooter
 /Assets/Models
