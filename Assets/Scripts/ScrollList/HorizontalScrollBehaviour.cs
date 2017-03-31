@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class HorizontalScrollBehaviour : MonoBehaviour {
+public class HorizontalScrollBehaviour : ScrollRect {
 
 	[SerializeField]
 	private RectTransform container;
+	//public RectTransform ListContainer;
 	public RectTransform[] cards;
 	public Image[] dots;
 
@@ -33,11 +34,19 @@ public class HorizontalScrollBehaviour : MonoBehaviour {
 		if (isLerp) {
 
 			float newx = Mathf.Lerp (container.anchoredPosition.x, lerpTo , Time.deltaTime * 10f);
+
+			if (Mathf.Abs(container.anchoredPosition.x - lerpTo) < 0.25f) {
+				newx = lerpTo;
+				isLerp = false;
+			}
+
 			Vector2 newPosition = new Vector2 (newx, container.anchoredPosition.y);
 			container.anchoredPosition = newPosition;
 		}
 
+		//ListContainer.anchoredPosition = new Vector2 (0f, container.anchoredPosition.y);
 		container.anchoredPosition = new Vector2 (container.anchoredPosition.x, 0f);
+
 	}
 
 
@@ -73,18 +82,21 @@ public class HorizontalScrollBehaviour : MonoBehaviour {
 		return nearestCard;
 	}
 
-	public void OnDrag () {
-		Debug.Log ("Drag");
+	public override void OnBeginDrag (UnityEngine.EventSystems.PointerEventData eventData)
+	{
+		base.OnBeginDrag (eventData);
+		Debug.Log ("OnBeginDrag");
 		isLerp = false;
 		isDragging = true;
-
 	}
 
-	public void OnEndDrag () {
 
+	public override void OnEndDrag (UnityEngine.EventSystems.PointerEventData eventData)
+	{
+		base.OnEndDrag (eventData);
+		Debug.Log ("OnEndDrag");
 		isDragging = false;
 
 		LerpToCard (GetNearestCard());
-
 	}
 }

@@ -11,6 +11,8 @@ public class LocalGUIGameBehaviour : MonoBehaviour {
 	private const float Z_POSITION = -6f;
 
 	public PlayerBehaviour player { get; set; }
+	public RadialProgressBarBehaviour respawnProgressBar;
+	public RadialProgressBarBehaviour backToMenuProgressBar;
 
 	[SerializeField]
 	private GameObject gameCanvas;
@@ -34,11 +36,21 @@ public class LocalGUIGameBehaviour : MonoBehaviour {
 
 	private float holdTimer = 0f;
 
-	void Update () {
-
-		if (player == null) 
-			return;
+	void Start () {
 		
+		if (respawnProgressBar != null) {
+
+			respawnProgressBar.SetTimeToHold(TIME_HOLD_TRIGGER);
+		}
+
+		if (backToMenuProgressBar != null) {
+
+			backToMenuProgressBar.SetTimeToHold (TIME_HOLD_TRIGGER);
+		}
+
+	}
+
+	void Update () {
 
 		if (player.isDead) {
 
@@ -57,7 +69,6 @@ public class LocalGUIGameBehaviour : MonoBehaviour {
 			gameCanvas.SetActive (true);
 			deadCanvas.SetActive (false);
 			UpdateScore ();
-
 		}
 
 	}
@@ -85,9 +96,11 @@ public class LocalGUIGameBehaviour : MonoBehaviour {
 		if (isRespawnTriggerDown || isBackTriggerDown) {
 			if (holdTimer > TIME_HOLD_TRIGGER) {
 				if (isRespawnTriggerDown) {
+					respawnProgressBar.ResetProgressBar ();
 					player.CmdRespawn ();
 				} else { 
-					//
+					backToMenuProgressBar.ResetProgressBar ();
+					player.Unspawn ();
 				}
 
 				holdTimer = 0f;
@@ -98,21 +111,32 @@ public class LocalGUIGameBehaviour : MonoBehaviour {
 		}
 	}
 
-
 	public void MoveTrigger (bool value) {
-
+		if (player == null)
+			return;
+			
 		player.isMoving = value;
 	}
 
 	public void ShootTrigger (bool value) {
-
+		if (player == null)
+			return;
+		
 		player.isShooting = value;
 	}
 
 	public void RespawnTrigger (bool value) {
+		
 		holdTimer = 0f;
+		respawnProgressBar.IsHold (value);
 		isRespawnTriggerDown = value;
+	}
 
+	public void BackToMenuTrigger (bool value) {
+
+		holdTimer = 0f;
+		backToMenuProgressBar.IsHold (value);
+		isBackTriggerDown = value;
 	}
 
 }

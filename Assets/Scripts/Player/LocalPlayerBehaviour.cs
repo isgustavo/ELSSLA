@@ -21,14 +21,78 @@ public class PlayerData {
 		programmerDeaths = 0;
 		shipName = " "; 
 	}
+}
+
+
+public class HighscorePlayer {
+
+	//image
+	private string name;
+	private int highscore;
+
+	public HighscorePlayer (string name, int highscore) {
+
+		this.name = name;
+		this.highscore = highscore;
+	}
+
+
+	public string GetName() {
+
+		return name;
+	}
+
+	public int GetHighscore () {
+
+		return highscore;
+	}
 
 }
+
+
+public class HeadToHeadPlayer {
+
+	private int id;
+	private string name;
+	private int deaths;
+	private int kills;
+	//image
+
+
+	public HeadToHeadPlayer (int id, string name, int deaths, int kills) {
+
+		this.id = id;
+		this.name = name;
+		this.deaths = deaths;
+		this.kills = kills;
+
+	}
+
+	public string GetName () {
+		return name;
+	}
+
+	public int GetDeaths () {
+		return deaths;
+	}
+
+	public int GetKills () {
+		return kills;
+	}
+}
+
 
 public class LocalPlayerBehaviour : MonoBehaviour {
 
 	public static LocalPlayerBehaviour instance = null;
 
 	private PlayerData player;
+
+	private List<HighscorePlayer> highscorePlayers = new List<HighscorePlayer> ();
+	private bool highscoreValuesAvailable = false;
+
+	private List<HeadToHeadPlayer> headToHeadListPlayers = new List<HeadToHeadPlayer> ();
+	private bool headToHeadValuesAvailable = false;
 
 	void Awake () {
 
@@ -44,6 +108,8 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 		}
 
 		LoadLocalPlayerInfo ();
+		LoadHighscoreFriends ();
+		LoadHeadToHeadStats ();
 
 	}
 
@@ -64,6 +130,65 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 			file.Close (); 
 		}
 
+	}
+
+
+	void LoadHighscoreFriends () {
+
+
+		highscorePlayers = MockHighscoreFriends ();
+
+		highscoreValuesAvailable = true;
+	}
+
+	List<HighscorePlayer> MockHighscoreFriends () {
+
+
+		List<HighscorePlayer> hp = new List<HighscorePlayer> (); 
+
+		HighscorePlayer player1 = new HighscorePlayer ("Gustavo", 89999);
+		HighscorePlayer player2 = new HighscorePlayer ("Mariana", 87643);
+		HighscorePlayer player3 = new HighscorePlayer ("Pedro", 300);
+		HighscorePlayer player4 = new HighscorePlayer ("NomeMaiorQtodos", 8789);
+		HighscorePlayer player5 = new HighscorePlayer ("NomeRealmenteGrande", 500);
+
+
+		hp.Add (player1);
+		hp.Add (player2);
+		hp.Add (player3);
+		hp.Add (player4);
+		hp.Add (player5);
+
+
+		return hp;
+	}
+
+	void LoadHeadToHeadStats () {
+
+		headToHeadListPlayers = MockHeadToHeadList ();
+		headToHeadValuesAvailable = true;
+	}
+
+
+	List<HeadToHeadPlayer> MockHeadToHeadList () {
+
+		List<HeadToHeadPlayer> hh = new List<HeadToHeadPlayer> ();
+
+		HeadToHeadPlayer player1 = new HeadToHeadPlayer (1, "Gustavo", 3, 6);
+		HeadToHeadPlayer player2 = new HeadToHeadPlayer (2, "Mariana", 6, 2);
+		HeadToHeadPlayer player3 = new HeadToHeadPlayer (3, "Pedro", 1, 1);
+		HeadToHeadPlayer player4 = new HeadToHeadPlayer (4, "NomeMaiorQtodos", 5, 9);
+		HeadToHeadPlayer player5 = new HeadToHeadPlayer (5, "NomeRealmenteGrande",2, 0);
+		HeadToHeadPlayer player6 = new HeadToHeadPlayer (6, "Programador", 2, 3);
+
+		hh.Add (player1);
+		hh.Add (player2);
+		hh.Add (player3);
+		hh.Add (player4);
+		hh.Add (player5);
+		hh.Add (player6);
+
+		return hh;
 	}
 
 	public void SaveLocalPlayerIndo (int score) {
@@ -94,5 +219,26 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 		return player.highscore;
 	}
 
+	public List<HighscorePlayer> GetHighscorePlayersList () {
+
+		return highscorePlayers;
+	}
+
+	public List<HeadToHeadPlayer> GetHeadToHeadListPlayers () {
+
+		return headToHeadListPlayers;
+	}
+
+	public string GetLocalPlayerName () {
+		return "Gustavo";
+	}
+
+	public bool GetHighscoreValuesAvailable () {
+		return highscoreValuesAvailable;
+	}
+
+	public bool GetHeadToHeadValuesAvailable () {
+		return headToHeadValuesAvailable;
+	}
 
 }

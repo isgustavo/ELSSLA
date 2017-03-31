@@ -7,7 +7,7 @@ public delegate void PushDelegate (AsteroidBehaviour asteroid);
 
 public class AsteroidSpawnManager : NetworkBehaviour {
 
-	private const int ASTEROID_POOL_SIZE = 10;
+	private const int ASTEROID_POOL_SIZE = 30;
 
 	public GameObject asteroidPrefab;
 	private List<AsteroidBehaviour> asteroidPool = new List<AsteroidBehaviour> ();

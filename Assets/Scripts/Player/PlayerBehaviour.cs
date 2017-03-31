@@ -7,6 +7,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 
 public class PlayerBehaviour : NetworkBehaviour, Destructible {
+	
+	public static string LOCAL_PLAYER_TAG = "LocalPlayer";
 
 	private const string OBJECT_NAME_PREFIX = "PLAYER";
 	private const int POINTS = 300;
@@ -118,16 +120,12 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 		}
 
 	}
-
+		
 	//MARK:: Network Behaviour methods
 	public override void OnStartLocalPlayer () {
 		base.OnStartLocalPlayer ();
 
-		CameraFollowBehaviour camera = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<CameraFollowBehaviour> ();
-		camera.target = gameObject;
-
-		LocalGUIGameBehaviour game = GameObject.FindGameObjectWithTag ("GameGUI").GetComponent<LocalGUIGameBehaviour> ();
-		game.player = this;
+		gameObject.tag = LOCAL_PLAYER_TAG;
 
 	}
 
@@ -135,7 +133,11 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 		base.OnStartClient ();
 
 		gameObject.transform.name = "PLAYER" + gameObject.GetComponent<NetworkIdentity> ().netId.ToString ();
-		GameManagerBehaviour.instance.AddPlayer (gameObject.transform.name, this);
+
+		if (!isServer)
+			return;
+
+		//ServerManagerBehaviour.instance.AddPlayer (gameObject.transform.name, this);
 	}
 
 	//MARK:: Hook methods
@@ -202,6 +204,15 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 	public void CmdRespawn () {
 
 		isDead = false;
+	}
+		
+	public void Unspawn () {
+
+
+		NetworkManagerBehaviour net = GameObject.FindGameObjectWithTag ("NetworkManager").GetComponent<NetworkManagerBehaviour> ();
+		net.StopClient ();
+		//Network.RemoveRPCs(Network.player);
+		//Network.DestroyPlayerObjects(Network.player);
 	}
 
 	[Command]

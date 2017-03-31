@@ -6,27 +6,36 @@ using UnityEngine.Networking;
 public class NetworkManagerBehaviour : NetworkManager {
 
 	private const int NETWORK_PORT = 7777;
-	[SerializeField]
-	private NetworkDiscoveryBehaviour discovery;
-		
-	public void OnPlayAction () {
+	public NetworkDiscoveryBehaviour discovery;
+
+	public void OnTapAction () {
+
+		if (this.discovery.IsServerFound ()) {
+			OnJoinAction ();
+		} else {
+			OnPlayAction ();
+		}
+	}
+
+	void OnPlayAction () {
 		networkAddress = Network.player.ipAddress;
 		networkPort = NETWORK_PORT;
 
 		StartHost ();
 	}
 
-	public void OnJoinAction () {
-		networkAddress = discovery.Server.ServerIp;
+	void OnJoinAction () {
+		networkAddress = this.discovery.GetAddress ();
 
 		StartClient ();
+
 	}
 
 	public override void OnStartHost () {
-		discovery.StopBroadcast ();
+		this.discovery.StopBroadcast ();
 
-		discovery.broadcastData = networkPort.ToString ();
-		discovery.StartAsServer ();
+		this.discovery.broadcastData = networkPort.ToString ();
+		this.discovery.StartAsServer ();
 	}
 
 	public override void OnClientSceneChanged(NetworkConnection conn) {
@@ -36,17 +45,17 @@ public class NetworkManagerBehaviour : NetworkManager {
 	public override void OnClientConnect(NetworkConnection conn) {
 		//base.OnClientConnect(conn);
 	}
-
-
+		
 	public override void OnServerAddPlayer (NetworkConnection conn, short playerControllerId) {
 
-		foreach (GameObject ship in spawnPrefabs) {
+		foreach (GameObject prefab in spawnPrefabs) {
 			
-			if (LocalPlayerBehaviour.instance.GetShipName () == ship.transform.name) {
+			if (LocalPlayerBehaviour.instance.GetShipName () == prefab.transform.name) {
 
-				var player = (GameObject)GameObject.Instantiate (ship);
-				NetworkServer.AddPlayerForConnection (conn, player, playerControllerId);
+				GameObject playerShip = (GameObject)GameObject.Instantiate (prefab);
+				NetworkServer.AddPlayerForConnection (conn, playerShip, playerControllerId);
 				break;
+
 			}
 		}
 			

@@ -51,7 +51,7 @@ public class BulletBehaviour : NetworkBehaviour {
 		Destructible obj = hit.GetComponent<Destructible> ();
 		if (obj != null) {
 			Debug.Log ("Collision" + playerId);
-			PlayerBehaviour player = GameManagerBehaviour.instance.GetPlayer (playerId);
+			PlayerBehaviour player = ServerManagerBehaviour.instance.GetPlayer (playerId);
 			player.score += obj.GetPoints ();
 		}
 			

@@ -7,8 +7,8 @@ public delegate void PushFragmentDelegate (FragmentBehaviour[] fragment);
 
 public class FragmentSpawnManager: MonoBehaviour {
 
-	private const int TWO_PARTS_FRAGMENT_POOL_SIZE = 6;
-	private const int THREE_PARTS_FRAGMENT_POOL_SIZE = 4;
+	private const int TWO_PARTS_FRAGMENT_POOL_SIZE = 35;
+	private const int THREE_PARTS_FRAGMENT_POOL_SIZE = 15;
 
 	[SerializeField]
 	private GameObject twoPartsFragment1;

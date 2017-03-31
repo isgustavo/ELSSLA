@@ -4,21 +4,20 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
 
-public class GameManagerBehaviour : NetworkBehaviour {
+public class ServerManagerBehaviour: NetworkBehaviour {
 
-	private const string PLAYER_ID_PREFIX = "Player";
+	public static ServerManagerBehaviour instance;
 
-	public static GameManagerBehaviour instance;
 	[SerializeField]
 	private GameObject asteroidSpawnManager;
 	private Dictionary<string, PlayerBehaviour> players = new Dictionary<string, PlayerBehaviour> ();
 
-	public GameObject prefab;
-
 	void Awake () {
 		if (instance == null) {
+			
 			instance = this;
 		} else if (instance != this) {
+
 			Destroy (gameObject);    
 		}
 	}
@@ -26,16 +25,8 @@ public class GameManagerBehaviour : NetworkBehaviour {
 	public override void OnStartServer () {
 		base.OnStartServer ();
 
+		Debug.Log ("OnStartServer");
 		NetworkServer.Spawn (Instantiate (asteroidSpawnManager));
-	}
-
-	public override void OnStartClient ()
-	{
-		base.OnStartClient ();
-
-		//GameObject obj = (GameObject)Instantiate (prefab);
-		//NetworkServer.AddPlayerForConnection (NetworkManagerBehaviour.instance.conn, obj, 0);
-
 	}
 
 	public void AddPlayer (string playerId, PlayerBehaviour player) {
@@ -47,5 +38,4 @@ public class GameManagerBehaviour : NetworkBehaviour {
 		return players [playerId];
 
 	}
-
 }
