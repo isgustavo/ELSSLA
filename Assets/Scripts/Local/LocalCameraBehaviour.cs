@@ -14,7 +14,7 @@ public class LocalCameraBehaviour : MonoBehaviour {
 
 		Vector3 newPosition = new Vector3 (playerTransform.position.x, playerTransform.position.y, CAMERA_Z_POSITION);
 
-		transform.position = newPosition;
+		gameObject.transform.position = newPosition;
 	}
 
 	public void SetPlayer(Transform transform) {
