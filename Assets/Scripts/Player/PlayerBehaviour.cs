@@ -137,7 +137,7 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 		if (!isServer)
 			return;
 
-		//ServerManagerBehaviour.instance.AddPlayer (gameObject.transform.name, this);
+		ServerManagerBehaviour.instance.AddPlayer (gameObject.transform.name, this);
 	}
 
 	//MARK:: Hook methods

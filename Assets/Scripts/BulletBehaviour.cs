@@ -16,14 +16,15 @@ public class BulletBehaviour : NetworkBehaviour {
 	private bool isSpread = false;
 
 	public ParticleSystem explosion;
+	public ParticleSystem removeExplosion;
 
 	void Start () {
 
 		rb = GetComponent<Rigidbody> ();
 		rb.velocity = transform.up * VELOCITY;
 
-		StartCoroutine(Spread());
-		Destroy(this.gameObject, LIFETIME);
+		StartCoroutine(Spread ());
+		StartCoroutine(Remove ());
 
 	}
 
@@ -35,7 +36,6 @@ public class BulletBehaviour : NetworkBehaviour {
 			
 			rb.rotation = Quaternion.Lerp(rb.rotation, rotTarget, Time.deltaTime * SPREED_VELOCITY);
 		}
-
 	}
 
 	void OnCollisionEnter(Collision collision) { 
@@ -45,12 +45,14 @@ public class BulletBehaviour : NetworkBehaviour {
 
 		gameObject.GetComponent<BoxCollider> ().enabled = false;
 
-		Instantiate (explosion, gameObject.transform.position, gameObject.transform.rotation).Play();
+		explosion = Instantiate (explosion, gameObject.transform.position, gameObject.transform.rotation);
+		explosion.Play ();
+
+		Destroy (explosion.gameObject, .5f);
 
 		GameObject hit = collision.gameObject;
 		Destructible obj = hit.GetComponent<Destructible> ();
 		if (obj != null) {
-			Debug.Log ("Collision" + playerId);
 			PlayerBehaviour player = ServerManagerBehaviour.instance.GetPlayer (playerId);
 			player.score += obj.GetPoints ();
 		}
@@ -64,6 +66,16 @@ public class BulletBehaviour : NetworkBehaviour {
 		yield return new WaitForSeconds(SPREAD_DELAY);
 		rotTarget = Random.rotation;
 		isSpread = true;
+	}
+
+	IEnumerator Remove () {
+
+		yield return new WaitForSeconds(LIFETIME);
+		removeExplosion = Instantiate (removeExplosion, gameObject.transform.position, gameObject.transform.rotation);
+		removeExplosion.Play ();
+
+		Destroy(removeExplosion.gameObject, .5f);
+		Destroy (gameObject);
 	}
 		
 }

@@ -89,7 +89,7 @@ public class AsteroidBehaviour : NetworkBehaviour, Destructible {
 		return POINTS;
 	}
 
-	[ClientRpc]
+	//[ClientRpc]
 	void RpcAsteroidExplosion (Vector3 position, Quaternion rotation) {
 
 		Instantiate (explosion, position, rotation).Play();
