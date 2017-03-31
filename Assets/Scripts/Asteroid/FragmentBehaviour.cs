@@ -37,11 +37,11 @@ public class FragmentBehaviour : NetworkBehaviour, Destructible {
 		if (!isServer || !inUse)
 			return;
 		
-		GameUtil.AjustZPosition (rb);
-
 		if (!GameUtil.VerifyInsideWorld (rb.position)) {
 			OnChangeUse (false, GameUtil.NO_USE_POSITION, Quaternion.identity);
 		}
+
+		GameUtil.AjustZPosition (rb);
 	}
 
 	void OnCollisionEnter(Collision collision) {
@@ -85,6 +85,7 @@ public class FragmentBehaviour : NetworkBehaviour, Destructible {
 
 		} else { 
 			
+			cc.enabled = false;
 			rb.position = position;
 			rb.velocity = Vector3.zero;
 		}

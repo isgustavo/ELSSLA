@@ -47,6 +47,9 @@ public class FragmentSpawnManager: MonoBehaviour {
 
 			fragmentsPool.Add(new FragmentBehaviour[2]{part1, part2});
 
+			twoPart1.transform.parent = gameObject.transform;
+			twoPart2.transform.parent = gameObject.transform;
+
 			NetworkServer.Spawn (twoPart1);
 			NetworkServer.Spawn (twoPart2);
 
@@ -70,6 +73,10 @@ public class FragmentSpawnManager: MonoBehaviour {
 				part33.pushDelegate += new PushFragmentDelegate (this.Push);
 
 				fragmentsPool.Add(new FragmentBehaviour[3]{part31, part32, part33});
+
+				threePart1.transform.parent = gameObject.transform;
+				threePart2.transform.parent = gameObject.transform;
+				threePart3.transform.parent = gameObject.transform;
 
 				NetworkServer.Spawn (threePart1);
 				NetworkServer.Spawn (threePart2);

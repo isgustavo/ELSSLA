@@ -23,6 +23,7 @@ public class AsteroidSpawnManager : NetworkBehaviour {
 			GameObject asteroid = (GameObject)Instantiate (asteroidPrefab);
 			asteroid.transform.name = "Asteroid" + i;
 			asteroid.GetComponent<AsteroidBehaviour> ().pushDelegate += new PushDelegate (this.Push);
+			asteroid.transform.parent = gameObject.transform;
 
 			NetworkServer.Spawn (asteroid);
 		}

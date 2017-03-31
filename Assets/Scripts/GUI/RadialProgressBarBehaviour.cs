@@ -58,7 +58,8 @@ public class RadialProgressBarBehaviour : GuiBehaviour {
 			FadeToFullAlphaByTime (1.6f, 0.1f, 1f);
 
 		} else {
-
+			
+			StopAllCoroutines ();
 			FadeToZeroAlphaByTime (.3f, 3f, .5f);
 		}
 	}

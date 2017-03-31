@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class GameUtil : MonoBehaviour {
 
-	public const int WORLD_RADIUS = 20;
+	public const int WORLD_RADIUS = 35;
 	public const float Z_FINAL_POSITION = -7.5f;
 	public const float Z_DEAD_POSITION = -10f;
 	public const float POSITION_SPEED = 10f;
@@ -46,7 +46,7 @@ public class GameUtil : MonoBehaviour {
 
 	public static Vector3 GetRandomPosition () {
 
-		return new Vector3 (Random.Range (-12, 12), Random.Range (-12, 12), Random.Range (6, 20));
+		return new Vector3 (Random.Range (-15, 15), Random.Range (-15, 15), Z_FINAL_POSITION);
 
 	}
 

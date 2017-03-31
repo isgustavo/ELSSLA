@@ -40,13 +40,12 @@ public class AsteroidBehaviour : NetworkBehaviour, Destructible {
 		if (!isServer || !inUse)
 			return;
 
-		GameUtil.AjustZPosition (rb);
-
 		if (!GameUtil.VerifyInsideWorld (rb.position)) {
 			OnChangeUse (false);
 		}
-	}
 
+		GameUtil.AjustZPosition (rb);
+	}
 
 	void OnCollisionEnter(Collision collision) {
 
@@ -77,7 +76,8 @@ public class AsteroidBehaviour : NetworkBehaviour, Destructible {
 			rb.velocity = GameUtil.GetRandomVelocity ();
 			cc.enabled = true;
 		} else {
-
+			
+			cc.enabled = false;
 			pushDelegate (this);
 			rb.position = GameUtil.NO_USE_POSITION;
 			rb.velocity = Vector3.zero;
