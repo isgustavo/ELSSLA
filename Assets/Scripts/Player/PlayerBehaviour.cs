@@ -5,6 +5,7 @@ using System.IO;
 using System;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class PlayerBehaviour : NetworkBehaviour, Destructible {
 	
@@ -43,6 +44,11 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 	[SerializeField]
 	private ParticleSystem force;
 	private bool forceExplosionUsed = false;
+
+	//image
+	private string lastNemezisName;
+	private int lastNemezisHighScore;
+
 
 
 	//MARK::
@@ -120,17 +126,27 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 		}
 
 	}
+
+	public Text playerNameText;
 		
 	//MARK:: Network Behaviour methods
 	public override void OnStartLocalPlayer () {
 		base.OnStartLocalPlayer ();
 
 		gameObject.tag = LOCAL_PLAYER_TAG;
+		playerNameText.text = NetworkManagerBehaviour.name;
 
+		Debug.Log ("TESTE LOCAL PLAYER");
 	}
 
 	public override void OnStartClient () {
 		base.OnStartClient ();
+
+		if (isLocalPlayer) {
+			Debug.Log ("OnStartClient isLocalPlayer");
+		} else {
+			Debug.Log ("OnStartClient is other player");
+		}
 
 		gameObject.transform.name = "PLAYER" + gameObject.GetComponent<NetworkIdentity> ().netId.ToString ();
 
@@ -183,10 +199,10 @@ public class PlayerBehaviour : NetworkBehaviour, Destructible {
 		cc.enabled = false;
 
 		GameObject hit = collision.gameObject;
-		BulletBehaviour obj = hit.GetComponent<BulletBehaviour> ();
+		BulletBehaviour bullet = hit.GetComponent<BulletBehaviour> ();
 
-		if (obj != null) {
-			//TODO: obj.playerId KILL YOU
+		if (bullet != null) {
+			//LocalPlayerBehaviour.instance.SaveNewNemezis (bullet.playerId);
 		}
 
 

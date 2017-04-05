@@ -25,7 +25,6 @@ public class ServerManagerBehaviour: NetworkBehaviour {
 	public override void OnStartServer () {
 		base.OnStartServer ();
 
-		Debug.Log ("OnStartServer");
 		NetworkServer.Spawn (Instantiate (asteroidSpawnManager));
 	}
 

@@ -2,32 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class NetworkManagerBehaviour : NetworkManager {
+
+	public static string name;
 
 	private const int NETWORK_PORT = 7777;
 	public NetworkDiscoveryBehaviour discovery;
 
-	public void OnTapAction () {
 
-		if (this.discovery.IsServerFound ()) {
-			OnJoinAction ();
-		} else {
-			OnPlayAction ();
-		}
-	}
-
-	void OnPlayAction () {
+	public void OnPlayAction (string t) {
+		name = t;
 		networkAddress = Network.player.ipAddress;
 		networkPort = NETWORK_PORT;
 
 		StartHost ();
 	}
 
-	void OnJoinAction () {
+	public void OnJoinAction (string t) {
+		name = t;
 		networkAddress = this.discovery.GetAddress ();
-
 		StartClient ();
+
 
 	}
 

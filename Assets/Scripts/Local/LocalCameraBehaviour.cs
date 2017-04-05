@@ -5,20 +5,29 @@ using UnityEngine;
 public class LocalCameraBehaviour : MonoBehaviour {
 
 	private const float CAMERA_Z_POSITION = -10f;
-	private Transform playerTransform;
-
+	private PlayerBehaviour player;
+	public bool isDead;
 	void LateUpdate () {
 
-		if (playerTransform == null)
+		if (player == null)
 			return;
 
-		Vector3 newPosition = new Vector3 (playerTransform.position.x, playerTransform.position.y, CAMERA_Z_POSITION);
+		if (!player.isDead) {
+			Vector3 newPosition = new Vector3 (player.transform.position.x, player.transform.position.y, CAMERA_Z_POSITION);
 
-		gameObject.transform.position = newPosition;
+			gameObject.transform.position = newPosition;
+		} else {
+
+			Vector3 position = gameObject.transform.position;
+
+			gameObject.transform.position = Vector3.Lerp(gameObject.transform.position, new Vector3(0f,0f, -20f), Time.deltaTime * 10);
+		}
+
 	}
 
-	public void SetPlayer(Transform transform) {
+	public void SetPlayer(PlayerBehaviour player) {
 
-		this.playerTransform = transform;
+		this.player = player;
 	}
+		
 }

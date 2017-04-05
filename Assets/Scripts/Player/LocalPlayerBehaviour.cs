@@ -5,6 +5,7 @@ using UnityEngine;
 using System;
 using System.Runtime.Serialization.Formatters.Binary; 
 using System.IO;
+using Facebook.Unity;
 
 [Serializable] 
 public class PlayerData {
@@ -76,8 +77,18 @@ public class HeadToHeadPlayer {
 		return deaths;
 	}
 
+	public void AddDeath () {
+
+		this.deaths += 1;
+	}
+
 	public int GetKills () {
 		return kills;
+	}
+
+	public void AddKill () {
+
+		this.kills += 1;
 	}
 }
 
@@ -91,8 +102,9 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 	private List<HighscorePlayer> highscorePlayers = new List<HighscorePlayer> ();
 	private bool highscoreValuesAvailable = false;
 
-	private List<HeadToHeadPlayer> headToHeadListPlayers = new List<HeadToHeadPlayer> ();
+	private Dictionary<int, HeadToHeadPlayer> headToHeadValuesPlayers = new Dictionary<int, HeadToHeadPlayer> ();
 	private bool headToHeadValuesAvailable = false;
+
 
 	void Awake () {
 
@@ -107,9 +119,34 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 			Destroy (gameObject);
 		}
 
+		FB.Init (SetInit, OnHideUnity);
 		LoadLocalPlayerInfo ();
 		LoadHighscoreFriends ();
 		LoadHeadToHeadStats ();
+
+	}
+
+	void SetInit() {
+
+		if (FB.IsLoggedIn) {
+			//fbLoginButton.SetActive (false);
+			//fbLoggedContainer.SetActive (true);
+
+			//FB.API ("/me?fields=first_name", HttpMethod.GET, DisplayUsername);
+			//FB.API ("/me/picture?type=square&height=128&width=128", HttpMethod.GET, DisplayProfilePic);
+		} else {
+			Debug.Log ("FB is not logged in");
+		}
+
+	}
+
+	void OnHideUnity(bool isGameShown) {
+
+		if (!isGameShown) {
+			Time.timeScale = 0;
+		} else {
+			Time.timeScale = 1;
+		}
 
 	}
 
@@ -133,12 +170,50 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 	}
 
 
-	void LoadHighscoreFriends () {
+	public void LoadHighscoreFriends () {
 
 
-		highscorePlayers = MockHighscoreFriends ();
+		//highscorePlayers = MockHighscoreFriends ();
 
-		highscoreValuesAvailable = true;
+		//highscoreValuesAvailable = true;
+
+		if (FB.IsLoggedIn) {
+
+			FB.API ("/app/scores?fields=score,user.limit(30)", HttpMethod.GET, HighScoreCallBack);
+		}
+	}
+
+	public void SetScore () {
+
+		var scoreData = new Dictionary<string, string> ();
+		scoreData ["score"] = "69";
+
+		FB.API ("/me/scores", HttpMethod.POST, delegate (IGraphResult result) {
+			Debug.Log("Set score: "+ result.RawResult);
+		}, scoreData);
+
+		LoadHighscoreFriends ();
+	}
+
+	private void HighScoreCallBack (IResult result) {
+		Debug.Log ("HighScore Callback:" + result.ResultDictionary);
+
+
+		IDictionary<String, object> data = result.ResultDictionary;
+		List<object> listObj = (List<object>)data ["data"];
+
+		foreach (object obj in listObj) {
+
+			var entry = (Dictionary<string, object>)obj;
+			var user = (Dictionary<string, object>)entry ["user"];
+
+
+			Debug.Log (user ["name"].ToString () + "score: " + entry ["score"].ToString ());
+		}
+
+
+
+		//foreach(Object obj in result.ResultDictionary.to
 	}
 
 	List<HighscorePlayer> MockHighscoreFriends () {
@@ -165,7 +240,7 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 
 	void LoadHeadToHeadStats () {
 
-		headToHeadListPlayers = MockHeadToHeadList ();
+		//headToHeadListPlayers = MockHeadToHeadList ();
 		headToHeadValuesAvailable = true;
 	}
 
@@ -226,11 +301,15 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 
 	public List<HeadToHeadPlayer> GetHeadToHeadListPlayers () {
 
-		return headToHeadListPlayers;
+		return null;//headToHeadListPlayers;
 	}
 
 	public string GetLocalPlayerName () {
 		return "Gustavo";
+	}
+
+	public bool isLoggedIn () {
+		return true;
 	}
 
 	public bool GetHighscoreValuesAvailable () {
@@ -240,5 +319,24 @@ public class LocalPlayerBehaviour : MonoBehaviour {
 	public bool GetHeadToHeadValuesAvailable () {
 		return headToHeadValuesAvailable;
 	}
+		
+	public void SaveNewHeadToHead (bool death, int playerId) {
 
+		HeadToHeadPlayer hh = headToHeadValuesPlayers [playerId];
+
+		if (hh != null) {
+
+			if (death) {
+
+				hh.AddDeath ();
+			} else {
+				
+				hh.AddKill ();
+			}
+		} else {
+
+			//hh = new HeadToHeadPlayer(playerId, 
+		}
+		//save()
+	}
 }

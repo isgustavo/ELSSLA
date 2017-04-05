@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class NetworkDiscoveryBehaviour : NetworkDiscovery {
 
-	private bool serverFound = false;
-	//private string serverData;
 	private string serverAddress;
-
-	//public ObserverBehaviour observer;
+	public ObserverBehaviour observer;
 
 	void Start () {
 		Initialize ();
@@ -21,20 +19,11 @@ public class NetworkDiscoveryBehaviour : NetworkDiscovery {
 
 		//Network discovery component has found a server being broadcasted
 		this.serverAddress = fromAddress;
-		//this.serverData = data;
-
-		this.serverFound = true;
-
-		//observer.OnNotify ();
+		observer.OnNotify ();
 	}
 
 	public string GetAddress () {
 
 		return this.serverAddress;
-	}
-
-	public bool IsServerFound () {
-
-		return this.serverFound;
 	}
 }

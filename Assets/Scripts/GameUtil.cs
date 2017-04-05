@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GameUtil : MonoBehaviour {
 
 	public const int WORLD_RADIUS = 35;
-	public const float Z_FINAL_POSITION = -7.5f;
+	public const float Z_FINAL_POSITION = -5.6f;
 	public const float Z_DEAD_POSITION = -10f;
 	public const float POSITION_SPEED = 10f;
 	public static Vector3 NO_USE_POSITION = new Vector3 (0, 0, -20);

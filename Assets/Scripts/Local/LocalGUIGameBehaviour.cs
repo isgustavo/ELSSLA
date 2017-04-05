@@ -28,8 +28,13 @@ public class LocalGUIGameBehaviour : MonoBehaviour {
 	[SerializeField]
 	private GameObject deadCanvas;
 
-	[SerializeField]
-	private GameObject youDeadLetters;
+	private bool isNewHighScore;
+
+	private bool isNemezis;
+	public Text nemezisplayerNameText;
+	public Text nemezisPlayerHighscoreText;
+	public Text nemezisKillCountText;
+	public Text nemezisDeathCountText;
 
 	private bool isRespawnTriggerDown = false;
 	private bool isBackTriggerDown = false;
@@ -55,17 +60,16 @@ public class LocalGUIGameBehaviour : MonoBehaviour {
 		if (player.isDead) {
 
 			gameCanvas.SetActive (false);
-			//MoveTrigger (false);
-			//ShootTrigger (false);
 			deadCanvas.SetActive (true);
+
+			SetUpDeadCanvas ();
+			UpdateDead ();
+
+		} else {
 
 			lastScore = INITIAL_SCORE;
 			lastHighscore = INITIAL_HIGHSCORE;
 
-			UpdateDead ();
-
-		} else {
-			
 			gameCanvas.SetActive (true);
 			deadCanvas.SetActive (false);
 			UpdateScore ();
@@ -88,10 +92,20 @@ public class LocalGUIGameBehaviour : MonoBehaviour {
 		}
 	}
 
-	void UpdateDead () {
+	void SetUpDeadCanvas () {
 
-		Vector3 playerPosition = player.transform.position;
-		youDeadLetters.transform.position = new Vector3 (playerPosition.x, playerPosition.y, Z_POSITION);
+		if (this.isNewHighScore) {
+
+		}
+			
+		if (!LocalPlayerBehaviour.instance.isLoggedIn () || !this.isNemezis)
+			return;
+
+
+
+	}
+
+	void UpdateDead () {
 
 		if (isRespawnTriggerDown || isBackTriggerDown) {
 			if (holdTimer > TIME_HOLD_TRIGGER) {
@@ -109,6 +123,12 @@ public class LocalGUIGameBehaviour : MonoBehaviour {
 				holdTimer += Time.deltaTime;
 			}
 		}
+	}
+
+	public void GameActive () {
+
+
+		gameCanvas.SetActive (true);
 	}
 
 	public void MoveTrigger (bool value) {
